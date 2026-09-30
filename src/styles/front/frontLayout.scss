@@ -1,0 +1,81 @@
+.frontLayout{
+    max-width: 100%;
+    width: 1920px;
+    margin: 0 auto;
+    color: rgb(77, 80, 79);
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana;
+    font-size: 1rem;
+    background-color: #F2F2F2;
+    color: rgb(77, 80, 79);
+    font-family: "LXGW WenKai TC", cursive;
+    font-weight: 400;
+    font-style: normal;
+
+    .footer{
+        background-color: #2E2E2E;
+        color: #EDE6D9;
+        .context{
+            display: flex;
+            justify-content: space-between;
+            padding: 40px 150px;
+            line-height: 2rem;
+            letter-spacing: 0.1rem;
+            font-weight: 600;
+            .context2{
+                display: flex;
+                .mes{
+                    font-size: 2rem;
+                    padding-left: 10rem;
+                    // display: flex;
+                    // justify-content: center;
+                    .bi{
+                        padding: 1rem;
+                        color: white;
+                    }
+                }
+            }
+        }
+        .context3{
+            display: flex;
+            justify-content: space-between;
+            padding: 120px 150px 100px 150px;
+            align-items: flex-end;
+            div{
+                font-size: 10rem;
+                font-family:"Snowburst One", system-ui;
+            }
+        }
+    }
+}
+
+@media (max-width:1024px){
+    .frontLayout{
+        width: 100vw;
+        .footer{
+            padding: 50px 0px 25px 0px;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            .context{
+                font-size: 1rem;
+                line-height: 4rem;
+                padding: 0 0 80px 0;
+                flex-direction: column-reverse;
+                .context2{
+                    flex-direction: column-reverse;
+                    .mes{
+                        padding: 0 0 20px 0;
+                    }
+                }
+            }
+            .context3{
+                flex-direction: column;
+                padding: 0;
+                align-items:center;
+                p{
+                    font-size: 1rem;
+                }
+            }
+        } 
+    }
+}

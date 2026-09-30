@@ -1,0 +1,183 @@
+.about{
+    color: rgb(77, 80, 79);
+    background-color: rgb(233, 233, 233);
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto;
+    .about-text1{
+        width: 48%;
+        padding: 110px 0px 375px 0px;
+        font-size: 4rem;
+        align-self: flex-start;
+        .about-text1-2{
+            font-size: 1.2rem;
+            padding-top: 15px;
+        }
+    }
+    .about-text2{
+        width: 48%;
+        font-size: 1.2rem;
+        align-self: flex-end;
+        padding-bottom: 30px;
+        padding-left: 18px;
+        line-height: 2rem;
+    }
+}
+
+.story{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0px 50px 0px;
+    width: 98%;
+    margin: 0 auto;
+    .story-text1{
+        width: 48%;
+        display: flex;
+        flex-direction:column;
+        font-size: 1.2rem;
+        .story-text1-2{
+            font-size: 4rem;
+        }
+        .story-text1-3{
+            margin-top:auto ;
+            line-height: 2rem;
+        }
+
+    }
+    .story-text2{
+        width: 48%;
+        display: flex;
+        justify-content: center;
+        .story-img{
+            width: 70%;
+            height: 750px;
+            object-fit: cover;
+            opacity: 0;
+            transform: translateY(-20%);
+            transition: opacity 0.8s ease-in-out,transform 0.8s ease-in-out;
+        }
+        .story-img.show{
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+.associats{
+        width: 96%;
+        margin: 0 auto;
+        padding: 0 0px 50px 0px;
+        display: flex;
+        flex-direction: column;
+    .associats-name{
+        font-size: 4rem;
+        padding-bottom: 50px;
+    }
+    .card{
+        align-self: center;
+        opacity: 0;
+        transform: translateY(-20%);
+        transition: opacity 0.8s ease-in-out,transform 0.8s ease-in-out;
+        width: 70%;
+        img{
+            height: 350px;
+            width: 100%;
+            object-fit: cover;
+        }
+        .card-body{
+            padding-left: 50px;
+            display: flex;
+            flex-direction: column;
+            height: 350px;
+            .card-title{
+                font-size: 2.5rem;
+            }
+            .card-text{
+                margin-top: auto;
+                font-size: 1.2rem;
+                line-height: 2rem;
+            }
+        }
+    }
+    .card.show{
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width:1024px){
+    .about .about-text2{
+        padding-left: 11px;
+    }
+
+    .story{
+    padding: 11px 0px 50px 0px;
+}
+
+    .associats .card{
+        width: 90%;
+        .card-body{
+            padding-left: 20px;
+            height: 200px;
+            .card-title{
+                font-size: 1.8rem;
+            }
+            .card-text{
+                line-height: 1.5rem;
+            }
+        }
+    } 
+}
+
+@media (max-width:440px){
+    .about{
+        display: flex;
+        flex-direction: column;
+        .about-text1{
+            width: 98%;
+            margin: 0 auto;
+            padding: 110px 0px 50px 0px;
+            font-size: 3rem;
+            .about-text1-1{
+                font-size: 2rem;
+            }
+            .about-text1-2{
+                font-size: 1rem;
+            }
+        }
+        .about-text2{
+            width: 98%;
+            margin: 0 auto;
+            padding-left: 5px;
+        }
+    }
+    .story{
+        display: flex;
+        flex-direction: column-reverse;
+        position: relative;
+        width: 100%;
+        .story-text1{
+            width: 100%;
+            margin: 0 auto;
+            .story-text1-1{
+                position: absolute;
+                top: 11px;
+            }
+            .story-text1-2{
+                font-size: 2rem;
+                padding-top: 30px;
+                padding-bottom: 10px;
+            }
+        }
+        .story-text2{
+            padding-top: 40px;
+            width: 90%;
+            margin: 0 auto;
+        }
+    }
+    .associats{
+        .associats-name{
+            font-size: 2rem;
+        }
+    }
+}

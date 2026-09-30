@@ -1,0 +1,74 @@
+.products-navbar{
+    width: 100%;
+    margin: 0 auto;
+    padding-top: 140px;
+    padding-bottom: 45px;
+    display: flex;
+    justify-content: center;
+}
+
+.clothes{
+    width: 60%;
+    margin: 0 auto;
+    ul{
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        flex-wrap: wrap;
+        li{
+                position: relative;
+                width:100%;
+                div{
+                    width: 95%;
+                    margin: 0 auto;
+                    img{
+                        width: 100%;
+                        height: 392px;
+                        object-fit: cover;
+                        overflow: hidden;
+                        transition: transform 0.3s ease;
+                    }
+                    img:hover{
+                        transform: scale(101%);
+                        transform-origin: center;
+                    }
+                    .star{
+                        position: absolute;
+                        cursor: pointer;
+                        top: 10px;
+                        right: 30px;
+                    }
+                    .clothes-li-text{
+                        color: rgb(77, 80, 79);
+                    }
+                }
+        }
+    }
+}
+
+@media(max-width:1024px){
+    .clothes ul{
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+
+@media(max-width:440px){
+    .products-navbar{
+        padding-top: 100px;
+        ul{
+            width: 90%;
+            justify-content: center;
+            flex-wrap: wrap;
+            
+        }
+    } 
+    .clothes{
+        width: 90%;
+        .img-box img{
+            height: 270px;
+        }
+        ul li div .star{
+            top: 10px;
+            right: 22px;
+        }
+    }
+}

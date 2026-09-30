@@ -1,0 +1,20 @@
+.checkout{
+    padding: 170px 0 100px 40px;
+    width: 30%;
+    margin: 0 auto;
+    .checkout-title{
+        font-size: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+}
+@media (max-width:1024px){
+    .checkout{
+        width: 50%;
+    }
+}
+@media (max-width:440px){
+    .checkout{
+        padding: 170px 0 100px 0px;
+        width: 90%;
+    }
+}

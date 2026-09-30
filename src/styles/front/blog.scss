@@ -1,0 +1,44 @@
+.blog{
+    width: 96%;
+    margin: 0 auto;
+    .blog-title{
+        padding-top: 150px;
+        padding-bottom: 20px;
+        .blog-title-1{
+            font-size: 3rem;
+            padding-bottom: 50px;
+        }
+    }
+    .card{
+        width: 50%;
+        .body-title{
+            display: flex;
+            align-items: center;
+            i{
+                font-size: 2rem;
+                padding-right: 10px;
+                color: rgb(100, 100, 100);
+            }
+            .card-title{
+                font-size: 1.5rem;
+            }
+        }
+    }
+}
+
+@media (max-width:440px){
+    .blog{
+        width: 80%;
+        .card{
+            width: 85%;
+            margin: 0 auto;
+        }
+        .blog-title{
+            padding-top: 100px;
+            .blog-title-1{
+                padding-bottom: 10px;
+                font-size: 2rem;
+            }
+        } 
+    }
+}

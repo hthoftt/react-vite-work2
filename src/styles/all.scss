@@ -1,0 +1,23 @@
+@import "bootstrap/scss/functions";
+@import "_variables.scss";
+@import "bootstrap/scss/bootstrap";
+@import "_resetcss.scss";
+@import "./Login.scss";
+@import "./front/navbar.scss";
+@import "./front/frontLayout.scss";
+@import "./front/home.scss";
+@import "./front/about.scss";
+@import "./front/blog.scss";
+@import "./front/products.scss";
+@import "./front/productsDetail.scss";
+@import "./front/checkout.scss";
+
+
+
+html {
+  font-size: 16px; /* 基準字體大小 */
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana;
+}

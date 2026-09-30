@@ -1,0 +1,93 @@
+.container{
+    padding-top: 150px;
+
+    i{
+        text-shadow: 0 0 1px rgb(77, 80, 79);
+    }
+}
+.mayLike{
+    width: 70%;
+    margin: 0 auto;
+    .mayLike-title{
+            padding-bottom: 20px;
+            font-size: 1.2rem;
+        }
+    .mayLike-ul{
+        display: flex;
+        text-align: center;
+        li{
+            position: relative;
+            .img-box{
+                .mayLike-img{
+                    width: 300px;
+                    height: 300px;
+                    object-fit: cover;
+                }
+            }
+            i{
+                position: absolute;
+                top: 15px;
+                right: 30px;
+            }
+            .clothes-text-1{
+                font-size: 1.2rem;
+                color: rgb(77, 80, 79);
+            }
+            .clothes-text-2{
+                display: flex;
+                justify-content: center;
+                color: rgb(77, 80, 79);
+            }
+        }
+    }
+}
+
+@media(max-width:440px){
+    .container{
+        padding-top: 108px;
+        .row{
+            display: flex;
+            flex-direction: column;
+            .col-6{
+                width: 100%;
+                .col{
+                    padding-top: 10px;
+                }
+            }
+        }
+    }
+
+    .mayLike{
+        width: 80%;
+        margin: 0 auto;
+        .mayLike-title{
+            padding-bottom: 30px;
+            font-size: 1.2rem;
+        }
+        .mayLike-ul{
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            li{
+                position: relative;
+                .mayLike-img{
+                    width: 50%;
+                }
+                i{
+                    position: absolute;
+                    top: 7px;
+                    right: 28%;
+                }
+                .clothes-text-1{
+                    font-size: 1rem;
+                    color: rgb(77, 80, 79);
+                }
+                .clothes-text-2{
+                    display: flex;
+                    justify-content: center;
+                    color: rgb(77, 80, 79);
+                }
+            }
+        }
+    }
+}
