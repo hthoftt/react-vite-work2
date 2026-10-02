@@ -12,7 +12,7 @@
 - 後台登入:串接 API 取得 token 進行驗證
 - 商品管理:可新增、編輯、刪除
 - 訂單管理:可新增、編輯、刪除
-- 後台介面使用 Bootstrap 模板
+- 部分介面使用 Bootstrap 模板
 - 商品資料透過 API 取得
 - 表單驗證使用 React Hook Form
 
