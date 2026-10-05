@@ -1,8 +1,14 @@
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
+import {
+  MessageContext,
+  handleUpdatedMessage,
+  handleDeleteMessage,
+} from "../../store/messageStore";
 
 const Navbar = ({ cartPoduct, quantity, setQuantity, carts }) => {
+  const [message, dispatch] = useContext(MessageContext);
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false); // 漢堡狀態
   const [cartShow, setCartShow] = useState(false); // 開啟關閉購物車
@@ -11,8 +17,8 @@ const Navbar = ({ cartPoduct, quantity, setQuantity, carts }) => {
 
   // 更新購物車數量
   const upDateCart = async (product, qty) => {
-    setIsLording(true);
     if (qty < 1) return;
+    setIsLording(true);
     const data = {
       data: {
         product_id: product.product_id,
@@ -26,6 +32,7 @@ const Navbar = ({ cartPoduct, quantity, setQuantity, carts }) => {
     console.log("更新購物車:", res);
     carts();
     setIsLording(false);
+    handleUpdatedMessage(dispatch);
   };
 
   // 刪除購物車單筆資料
@@ -37,6 +44,7 @@ const Navbar = ({ cartPoduct, quantity, setQuantity, carts }) => {
     console.log("刪除單筆購物車:", res);
     carts();
     setIsLording(false);
+    handleDeleteMessage(dispatch);
   };
 
   useEffect(() => {
@@ -58,25 +66,50 @@ const Navbar = ({ cartPoduct, quantity, setQuantity, carts }) => {
       {/* 導覽列 */}
       <div className={`navbar front-navbar px-7 ${hidden ? "hidden" : ""}`}>
         <Link className="h1" to={"/"}>
-          <img src="../../../public/logo.png" className="logo" alt="logo" />
+          <img
+            src={`${import.meta.env.BASE_URL}logo.png`}
+            className="logo"
+            alt="logo"
+          />
         </Link>
         <ul className={`ul ${open ? "show" : ""}`}>
-          <NavLink className="h5" to={"/"} onClick={() => setOpen(false)}>
+          <NavLink
+            className="h5"
+            to={"/"}
+            onClick={() => {
+              setOpen(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
             首頁
           </NavLink>
-          <NavLink className="h5" to={"/about"} onClick={() => setOpen(false)}>
+          <NavLink
+            className="h5"
+            to={"/about"}
+            onClick={() => {
+              setOpen(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
             起源
           </NavLink>
-          <NavLink className="h5" to={"/blog"} onClick={() => setOpen(false)}>
-            顧客回饋
-          </NavLink>
-          <NavLink className="h5" to={"/login"} onClick={() => setOpen(false)}>
-            後台登入
+          <NavLink
+            className="h5"
+            to={"/blog"}
+            onClick={() => {
+              setOpen(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
+            實體店面
           </NavLink>
           <NavLink
             className="h5 products"
             to={"/products"}
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
           >
             Products
             <i className="bi bi-arrow-right"></i>
@@ -118,81 +151,101 @@ const Navbar = ({ cartPoduct, quantity, setQuantity, carts }) => {
           <div>NT${cartPoduct.total || 0}</div>
         </div>
         <ul>
-          {Object.values(cartPoduct.carts || []).map((product, i) => {
-            return (
-              <li className="mb-3" key={i}>
-                <div className="cart-1 row">
-                  <button
-                    type="button"
-                    className="btn border-0 col-1 mx-2 fs-5"
-                  >
-                    <i
-                      className="bi bi-trash3"
-                      onClick={() => deleteCart(product)}
-                      disabled={isLording}
-                    ></i>
-                  </button>
-                  <img
-                    src={product.product.imageUrl}
-                    alt="圖片"
-                    className="col-4 cart-img"
-                  />
-                  <div className="fs-6 cart-text text-center col-3">
-                    <Link
-                      className="text-dark"
-                      to={`/products/${product.product_id}`}
-                      onClick={() => setCartShow(false)}
-                    >
-                      {product.product.title}
-                    </Link>
-                    <h3 className="mt-2">NT${product.product.price}</h3>
-                  </div>
-                  <div className="d-flex bg-light rounded col-4">
-                    <div>
-                      <button type="button" className="btn border-0">
-                        <i
-                          className="bi bi-plus-lg"
-                          onClick={() => upDateCart(product, product.qty + 1)}
-                          disabled={isLording}
-                        ></i>
-                      </button>
-                    </div>
-                    <input
+          {Object.values(cartPoduct.carts || []).length ? (
+            Object.values(cartPoduct.carts || []).map((product, i) => {
+              return (
+                <li className="mb-3" key={i}>
+                  <div className="cart-1 row">
+                    <button
                       type="button"
-                      className="btn text-center"
-                      style={{ width: "100%", color: "rgb(77, 80, 79)" }}
-                      value={product.qty}
-                      readOnly
+                      className="btn border-0 col-1 mx-2 fs-5"
+                    >
+                      <i
+                        className="bi bi-trash3"
+                        onClick={() => deleteCart(product)}
+                        disabled={isLording}
+                      ></i>
+                    </button>
+                    <img
+                      src={product.product.imageUrl}
+                      alt="圖片"
+                      className="col-4 cart-img"
                     />
+                    <div className="fs-6 cart-text text-center col-3">
+                      <Link
+                        className="text-dark"
+                        to={`/products/${product.product_id}`}
+                        onClick={() => setCartShow(false)}
+                      >
+                        {product.product.title}
+                      </Link>
+                      <h3 className="mt-2">NT${product.product.price}</h3>
+                    </div>
+                    <div className="d-flex bg-light rounded col-4">
+                      <div>
+                        <button type="button" className="btn border-0">
+                          <i
+                            className="bi bi-plus-lg"
+                            onClick={() => upDateCart(product, product.qty + 1)}
+                            disabled={isLording}
+                          ></i>
+                        </button>
+                      </div>
+                      <input
+                        type="button"
+                        className="btn text-center"
+                        style={{ width: "100%", color: "rgb(77, 80, 79)" }}
+                        value={product.qty}
+                        readOnly
+                      />
 
-                    <div>
-                      <button type="button" className="btn border-0">
-                        <i
-                          className="bi bi-dash-lg"
-                          onClick={() => upDateCart(product, product.qty - 1)}
-                          disabled={isLording}
-                        ></i>
-                      </button>
+                      <div>
+                        <button type="button" className="btn border-0">
+                          <i
+                            className="bi bi-dash-lg"
+                            onClick={() => upDateCart(product, product.qty - 1)}
+                            disabled={isLording}
+                          ></i>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </li>
-            );
-          })}
+                </li>
+              );
+            })
+          ) : (
+            <p className="ms-4">購物車尚未有商品哦!!</p>
+          )}
           <li>
-            <Link
-              to={"/checkout"}
-              style={{ textDecoration: "none" }}
-              onClick={() => setCartShow(false)}
-            >
-              <button
-                type="button"
-                className="btn btn-outline-dark w-100 mt-5"
-                disabled={isLording}
+            {Object.values(cartPoduct.carts || []).length ? (
+              <Link
+                to={"/checkout"}
+                style={{ textDecoration: "none" }}
+                onClick={() => setCartShow(false)}
               >
-                去買單
-              </button>
-            </Link>
+                <button
+                  type="button"
+                  className="btn btn-outline-dark w-100 mt-5"
+                  disabled={isLording}
+                >
+                  去買單
+                </button>
+              </Link>
+            ) : (
+              <Link
+                to={"/products"}
+                style={{ textDecoration: "none" }}
+                onClick={() => setCartShow(false)}
+              >
+                <button
+                  type="button"
+                  className="btn btn-outline-dark w-100 mt-5"
+                  disabled={isLording}
+                >
+                  去逛逛
+                </button>
+              </Link>
+            )}
           </li>
         </ul>
       </div>

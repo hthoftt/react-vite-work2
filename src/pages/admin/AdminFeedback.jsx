@@ -21,6 +21,8 @@ const AdminFeedback = () => {
   const [tempData, setTempData] = useState({});
   // 載入api錯誤訊息
   const [err, setErr] = useState([]);
+  // 刪除狀態
+  const [isLording, setIsLording] = useState(false);
 
   useEffect(() => {
     feedbackModal.current = new Modal("#feedbackModal", { backdrop: "static" });
@@ -41,6 +43,7 @@ const AdminFeedback = () => {
 
   // --api 刪除單筆資料
   const deleteData = async (id) => {
+    setIsLording(true);
     try {
       const res = await axios.delete(
         `/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/article/${id}`,
@@ -50,7 +53,9 @@ const AdminFeedback = () => {
         closeDeleteModal();
         getAllData(page);
       }
+      setIsLording(false);
     } catch (err) {
+      setIsLording(false);
       // console.error(err.response);
       return;
     }
@@ -93,6 +98,7 @@ const AdminFeedback = () => {
         deleteData={deleteData}
         id={tempData?.id}
         title={tempData?.title}
+        isLording={isLording}
       />
       <div className="d-flex justify-content-between align-items-center m-5">
         <h2 className="fw-bold">顧客回饋</h2>
@@ -119,7 +125,7 @@ const AdminFeedback = () => {
         <tbody>
           {feedback?.map((message) => {
             const backToDate = new Date(message.create_at * 1000);
-            const messageData =backToDate.toISOString().slice(5,10)
+            const messageData = backToDate.toISOString().slice(5, 10);
             return (
               <tr key={message.id}>
                 <td className="align-middle">{message.num}</td>

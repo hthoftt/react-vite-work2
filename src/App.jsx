@@ -17,7 +17,6 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<FrontLayout />}>
-          <Route path="/login" element={<Login />} />
           <Route path="" element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="blog" element={<Blog />} />
@@ -25,6 +24,7 @@ function App() {
           <Route path="products/:id" element={<ProduntsDetail />} />
           <Route path="checkout" element={<Checkout />} />
         </Route>
+        <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Dashboard />}>
           <Route path="products" element={<AdminProduct />} />
           <Route path="adminFeedback" element={<AdminFeedback />} />

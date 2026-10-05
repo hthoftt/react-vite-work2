@@ -27,24 +27,21 @@ const ProductsModal = ({
   });
 
   useEffect(() => {
-    const modal = document.getElementById("productModal");
-    modal.addEventListener("show.bs.modal", () => {
-      if (type === "create") {
-        setData({
-          title: "",
-          category: "",
-          origin_price: 0,
-          price: 0,
-          unit: "",
-          description: "",
-          content: "",
-          is_enabled: 1,
-          imageUrl: "",
-        });
-      } else {
-        setData({ ...tempData });
-      }
-    });
+    if (type === "create") {
+      setData({
+        title: "",
+        category: "",
+        origin_price: 0,
+        price: 0,
+        unit: "",
+        description: "",
+        content: "",
+        is_enabled: 1,
+        imageUrl: "",
+      });
+    } else if (tempData && tempData.id) {
+      setData({ ...tempData });
+    }
   }, [type, tempData]);
 
   const closeModal = () => {
@@ -101,8 +98,10 @@ const ProductsModal = ({
       getAllData(page);
       setIsLogin(false);
     } catch (err) {
-      console.error(err.response.data.message);
-      setErr(err.response.data.message);
+      // console.error(err.response.data.message);
+      Array.isArray(err.response.data.message)
+        ? setErr(err.response.data.message.join("、"))
+        : setErr(err.response.data.message);
       setIsLogin(false);
     }
   };
@@ -157,7 +156,7 @@ const ProductsModal = ({
                 {<div className="col-md-12 text-danger">{err}</div>}
                 <div className="col-md-6">
                   <label htmlFor="title" className="form-label">
-                    Title
+                    商品
                   </label>
                   <input
                     type="text"
@@ -171,7 +170,7 @@ const ProductsModal = ({
                 </div>
                 <div className="col-md-3">
                   <label htmlFor="category" className="form-label">
-                    Category
+                    類別1
                   </label>
                   <input
                     type="text"
@@ -185,7 +184,7 @@ const ProductsModal = ({
                 </div>
                 <div className="col-md-3">
                   <label htmlFor="unit" className="form-label">
-                    Unit
+                    類別2
                   </label>
                   <input
                     type="text"
@@ -199,7 +198,7 @@ const ProductsModal = ({
                 </div>
                 <div className="col-md-6">
                   <label htmlFor="image" className="form-label">
-                    upload imageUrl (3MB)
+                    上傳圖片 (3MB)
                   </label>
                   <input
                     className="form-control custom-file-input"
@@ -218,7 +217,7 @@ const ProductsModal = ({
                 </div>
                 <div className="col-md-3">
                   <label htmlFor="origin_price" className="form-label">
-                    Origin Price
+                    原價
                   </label>
                   <input
                     type="text"
@@ -232,7 +231,7 @@ const ProductsModal = ({
                 </div>
                 <div className="col-md-3">
                   <label htmlFor="price" className="form-label">
-                    Sale Price
+                    特價
                   </label>
                   <input
                     type="text"
@@ -246,7 +245,7 @@ const ProductsModal = ({
                 </div>
                 <div className="col-md-6">
                   <label htmlFor="imageUrl" className="form-label">
-                    or paste imageUrl link (3MB)
+                    或 圖片網址 (3MB)
                   </label>
                   <input
                     type="text"
@@ -260,7 +259,7 @@ const ProductsModal = ({
                 </div>
                 <div className="col-md-6">
                   <label htmlFor="description" className="form-label">
-                    Description
+                    描述
                   </label>
                   <textarea
                     className="form-control"
@@ -300,7 +299,7 @@ const ProductsModal = ({
                   disabled={isLogin}
                 />
                 <label className="form-check-label  mx-2" htmlFor="is_enabled">
-                  is_enabled
+                  啟用
                 </label>
               </div>
               <button

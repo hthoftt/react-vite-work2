@@ -1,17 +1,8 @@
-import { useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 
 const Products = () => {
-  const {
-    products,
-    setProducts,
-    allProducts,
-    setAllProducts,
-    getProducts,
-    currentFilter,
-    setCurrentFilter,
-    toggleIcon,
-  } = useOutletContext();
+  const { products, setProducts, allProducts, setCurrentFilter, toggleIcon } =
+    useOutletContext();
 
   const li = ["男生", "女生", "兒童"];
 
@@ -24,7 +15,9 @@ const Products = () => {
     }
     if (category === "搜尋" && unit === "搜尋") {
       productsFilter = allProducts.filter((product) =>
-        product.unit.includes(e.target.value.trim()),
+        product.title
+          .toLowerCase()
+          .includes(e.target.value.trim().toLowerCase()),
       );
       setProducts(productsFilter);
       return;
@@ -131,45 +124,50 @@ const Products = () => {
         </ul>
       </nav>
       <div className="clothes">
-        <ul>
-          {products.map((product, i) => {
-            return (
-              <li className="mb-5" key={i}>
-                <div>
-                  <Link
-                    className="text-decoration-none li_link"
-                    to={`/products/${product.id}`}
-                  >
-                    <div className="img-box">
-                      <img
-                        src={product.imageUrl}
-                        alt="圖片"
-                        className="border rounded"
-                      />
-                    </div>
-                    <i
-                      className={`star ${product.save ? "bi bi-star-fill" : "bi bi-star"} fs-3 text-light`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        toggleIcon(product.id);
-                      }}
-                    ></i>
-                    <div className="clothes-li-text">
-                      <h4 className="my-2 fs-4">{product.title}</h4>
-                      <div className="d-flex align-items-center">
-                        <h3 className="fw-bold text-decoration-line-through">
-                          NT${product.origin_price}
-                        </h3>
-                        <h3 className="fw-bold fs-4 ">NT${product.price}</h3>
+        {products.length ? (
+          <ul>
+            {products.map((product, i) => {
+              return (
+                <li className="mb-5" key={i}>
+                  <div>
+                    <Link
+                      className="text-decoration-none li_link"
+                      to={`/products/${product.id}`}
+                      onClick={() => window.scrollTo(0, 0)}
+                    >
+                      <div className="img-box">
+                        <img
+                          src={product.imageUrl}
+                          alt="圖片"
+                          className="border rounded"
+                        />
                       </div>
-                    </div>
-                  </Link>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+                      <i
+                        className={`star ${product.save ? "bi bi-star-fill" : "bi bi-star"} fs-3 text-light`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleIcon(product.id);
+                        }}
+                      ></i>
+                      <div className="clothes-li-text">
+                        <h4 className="my-2 fs-4">{product.title}</h4>
+                        <div className="d-flex align-items-center">
+                          <h3 className="fw-bold text-decoration-line-through">
+                            NT${product.origin_price}
+                          </h3>
+                          <h3 className="fw-bold fs-4 ">NT${product.price}</h3>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <div className="notProducts">目前仍未有商品哦!!</div>
+        )}
       </div>
     </>
   );

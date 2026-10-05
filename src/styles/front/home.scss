@@ -164,7 +164,7 @@
 
     .body3{
         padding-top: 150px;
-        padding-bottom: 250px;
+        padding-bottom: 100px;
         .body3-1{
             font-size: 3rem;
             padding-bottom: 10px;
@@ -234,11 +234,50 @@
             // }
         }
     }
+    .blog{
+        width: 96%;
+        margin: 0 auto;
+        padding-bottom: 70px;
+        .blog-title{
+                padding-bottom: 20px;
+                .blog-title-1{
+                    font-size: 3rem;
+                }
+        }
+        .blogCard{
+            display: grid;
+            grid-template-columns: repeat(5,1fr);
+            width: 100%;
+            margin: 0 auto;
+            gap: 1rem;
+            .card{
+                width: 100%;
+                opacity: 0;
+                transform: translateY(30px);
+                transition: opacity 0.6s ease,transform 0.6s ease;
+                .body-title{
+                    display: flex;
+                    align-items: center;
+                    i{
+                        font-size: 2rem;
+                        padding-right: 10px;
+                        color: rgb(100, 100, 100);
+                    }
+                    .card-title{
+                        font-size: 1.5rem;
+                    }
+                }
+            }
+            .card.show{
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    }
 }
 
 @media (max-width:1024px){
     .home{
-        
         .body1{
             .text1{
                 font-size: 4rem;
@@ -295,6 +334,12 @@
                 }
             }
         }
+        .blog{
+            padding-bottom: 10px;
+            .blogCard{
+                grid-template-columns: repeat(3,1fr);
+            }
+        } 
     }
 }
 
@@ -329,6 +374,20 @@
             padding-bottom: 50px;
             .body3-1{
                 font-size: 2rem;
+            }
+        }
+        .blog{
+            width: 80%;
+            padding-bottom: 10px;
+            .blog-title{
+                padding-bottom: 20px;
+                .blog-title-1{
+                    font-size: 2rem;
+                }
+            } 
+            .blogCard{
+                grid-template-columns: repeat(1,1fr);
+                gap: 0;
             }
         }
     }   

@@ -145,7 +145,7 @@ const FeedbackModal = ({
                 }
                 <div className="col-md-12">
                   <label htmlFor="title" className="form-label">
-                    Name_title
+                    顧客名稱
                   </label>
                   <input
                     type="text"
@@ -159,7 +159,7 @@ const FeedbackModal = ({
                 </div>
                 <div className="col-md-12">
                   <label htmlFor="create_at" className="form-label">
-                    Date_create_at
+                    留言日期
                   </label>
                   <input
                     type="date"
@@ -172,7 +172,7 @@ const FeedbackModal = ({
                 </div>
                 <div className="col-md-12">
                   <label htmlFor="content" className="form-label">
-                    Feedback_content
+                    內容
                   </label>
                   <textarea
                     className="form-control"
@@ -211,7 +211,7 @@ const FeedbackModal = ({
                   disabled={isLogin}
                 />
                 <label className="form-check-label mx-2" htmlFor="isPublic">
-                  isPublic
+                  公開
                 </label>
               </div>
               <button

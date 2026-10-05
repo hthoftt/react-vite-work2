@@ -1,16 +1,24 @@
 import Navbar from "./Navbar";
 import { Link, useLocation } from "react-router-dom";
 import { Outlet } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import axios from "axios";
+import Message from "../component/Message";
+import {
+  MessageContext,
+  initState,
+  messageReducer,
+} from "../../store/messageStore";
 
 const FrontLayout = () => {
+  const reducer = useReducer(messageReducer, initState);
   const [products, setProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [currentFilter, setCurrentFilter] = useState("全部");
   const [cartPoduct, setCartPoduct] = useState([]);
   const [quantity, setQuantity] = useState(1); // 使用者選擇的商品數量
   const location = useLocation();
+  const [feedback, setFaceback] = useState([]);
 
   // 取商客戶端商品資料,用updatedProducts新增資料屬性save,存取資料updatedProducts
   const getProducts = async () => {
@@ -49,13 +57,23 @@ const FrontLayout = () => {
     setCartPoduct(res.data.data);
   };
 
+  // 顧客回饋api
+  const getFeedback = async () => {
+    const res = await axios.get(
+      `/v2/api/${import.meta.env.VITE_APP_API_PATH}/articles`,
+    );
+    setFaceback(res.data.articles);
+  };
+
   useEffect(() => {
     getProducts();
     carts();
+    getFeedback();
   }, [location.pathname]);
 
   return (
-    <>
+    <MessageContext.Provider value={reducer}>
+      <Message />
       <div className="frontLayout">
         <Navbar
           cartPoduct={cartPoduct}
@@ -77,6 +95,9 @@ const FrontLayout = () => {
             quantity,
             setQuantity,
             carts,
+            getFeedback,
+            feedback,
+            setFaceback,
           }}
         ></Outlet>
         <div className="footer">
@@ -107,7 +128,7 @@ const FrontLayout = () => {
           <div className="context3">
             <div>
               <img
-                src="../../../public/logo.png"
+                src={`${import.meta.env.BASE_URL}logo.png`}
                 alt="logo"
                 style={{ width: "25rem", color: "white" }}
               />
@@ -116,7 +137,7 @@ const FrontLayout = () => {
           </div>
         </div>
       </div>
-    </>
+    </MessageContext.Provider>
   );
 };
 export default FrontLayout;

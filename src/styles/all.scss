@@ -21,3 +21,20 @@ html {
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana;
 }
+
+
+// message動畫
+.slide-in{
+  animation: slideInRight 0.8s ease forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(120%); /* 從右邊外面開始 */
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0); /* 回到原位 */
+    opacity: 1;
+  }
+}

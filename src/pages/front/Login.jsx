@@ -41,6 +41,17 @@ const Login = () => {
 
   return (
     <>
+      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+        <div className="container-fluid mx-4">
+          <div className="navbar-brand fw-bold">
+            <img
+              src={`${import.meta.env.BASE_URL}logo.png`}
+              alt="logo"
+              style={{ width: "100px" }}
+            />
+          </div>
+        </div>
+      </nav>
       <div className="login">
         <div className="row justify-content-center align-items-center login-w">
           <div className="col-md-4">

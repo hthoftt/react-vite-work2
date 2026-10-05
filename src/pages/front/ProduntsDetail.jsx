@@ -1,8 +1,10 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams, Link, useOutletContext } from "react-router-dom";
+import { handleSuccessMessage, MessageContext } from "../../store/messageStore";
 
 const ProduntsDetail = () => {
+  const [, dispatch] = useContext(MessageContext);
   const { id } = useParams();
   const [tempProduct, setTempProducts] = useState({}); // 存放當前商品資料
   const [isLoading, setIsLoading] = useState(false); // 搭配button disabled狀態避免用戶重複觸發
@@ -51,6 +53,7 @@ const ProduntsDetail = () => {
       console.log("新增商品:", res);
       setIsLoading(false);
       carts();
+      handleSuccessMessage(dispatch);
     } catch (err) {
       console.error(err.response);
       setIsLoading(false);
@@ -68,7 +71,7 @@ const ProduntsDetail = () => {
     : [];
 
   return (
-    <>
+    <div className="produntsDetail">
       <div className="container fs-5">
         <div className="row">
           <div className="col-6">
@@ -140,6 +143,7 @@ const ProduntsDetail = () => {
                   <Link
                     className="text-decoration-none li_link"
                     to={`/products/${product.id}`}
+                    onClick={window.scrollTo({ top: 0, behavior: "smooth" })}
                   >
                     <div className="img-box">
                       <img
@@ -172,7 +176,7 @@ const ProduntsDetail = () => {
           </ul>
         </nav>
       </div>
-    </>
+    </div>
   );
 };
 export default ProduntsDetail;

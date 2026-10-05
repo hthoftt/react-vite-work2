@@ -21,6 +21,8 @@ const AdminOrders = () => {
   const [tempData, setTempData] = useState({});
   // 金額狀態
   const [revenueState, setRevenueState] = useState("全部");
+  // 刪除狀態
+  const [isLording, setIsLording] = useState(false);
 
   useEffect(() => {
     orderModal.current = new Modal("#orderModal", { backdrop: "static" });
@@ -67,6 +69,7 @@ const AdminOrders = () => {
 
   // --api 刪除單筆資料
   const DeleteData = async (id) => {
+    setIsLording(true);
     try {
       const res = await axios.delete(
         `/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/order/${id}`,
@@ -76,8 +79,10 @@ const AdminOrders = () => {
         closeDeleteModal();
         getOrders(page);
       }
+      setIsLording(false);
     } catch (err) {
       console.error(err.response);
+      setIsLording(false);
     }
   };
 
@@ -104,6 +109,7 @@ const AdminOrders = () => {
         deleteData={DeleteData}
         id={tempData?.id}
         title={tempData?.user?.name}
+        isLording={isLording}
       />
       <div className="d-flex align-items-center mx-5 mt-5 mb-3">
         <h2 className="fw-bold">訂單</h2>
@@ -118,11 +124,11 @@ const AdminOrders = () => {
           <option value="已付款">已付款</option>
         </select>
       </div>
-        <div className="d-flex justify-content-end mb-5">
-          <div className="text-end mx-2">{`總金額: NT$${new Intl.NumberFormat("zh-TW").format(allOrder)}`}</div>
-          <div className="text-end mx-2">{`已付款: NT$${new Intl.NumberFormat("zh-TW").format(allIsPaid)}`}</div>
-          <div className="text-end mx-4">{`未付款: NT$${new Intl.NumberFormat("zh-TW").format(allNotPaid)}`}</div>
-        </div>
+      <div className="d-flex justify-content-end mb-5">
+        <div className="text-end mx-2">{`總金額: NT$${new Intl.NumberFormat("zh-TW").format(allOrder)}`}</div>
+        <div className="text-end mx-2">{`已付款: NT$${new Intl.NumberFormat("zh-TW").format(allIsPaid)}`}</div>
+        <div className="text-end mx-4">{`未付款: NT$${new Intl.NumberFormat("zh-TW").format(allNotPaid)}`}</div>
+      </div>
       <table className="table text-center  table-striped">
         <thead>
           <tr>

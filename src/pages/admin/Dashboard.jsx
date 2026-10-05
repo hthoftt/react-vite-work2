@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect } from "react";
-import { NavLink, Link, useNavigate, Outlet } from "react-router-dom";
+import { NavLink, useNavigate, Outlet } from "react-router-dom";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -38,18 +38,34 @@ const Dashboard = () => {
     <>
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid mx-4">
-          <Link className="navbar-brand fw-bold" to={"/admin/products"}>
-            <img src="../../../public/logo.png" alt="logo" style={{width:"100px"}} />
-          </Link>
+          <div className="navbar-brand fw-bold">
+            <img
+              src={`${import.meta.env.BASE_URL}logo.png`}
+              alt="logo"
+              style={{ width: "100px" }}
+            />
+          </div>
           <div className="navbar-collapse">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <NavLink className="nav-link me-2" to={"/admin/products"}>
+              <NavLink
+                className="nav-link me-2"
+                to={"/admin/products"}
+                onClick={() => window.scrollTo(0, 0)}
+              >
                 商品頁
               </NavLink>
-              <NavLink className="nav-link me-2" to={"/admin/orders"}>
+              <NavLink
+                className="nav-link me-2"
+                to={"/admin/orders"}
+                onClick={() => window.scrollTo(0, 0)}
+              >
                 訂單
               </NavLink>
-              <NavLink className="nav-link me-2" to={"/admin/adminFeedback"}>
+              <NavLink
+                className="nav-link me-2"
+                to={"/admin/adminFeedback"}
+                onClick={() => window.scrollTo(0, 0)}
+              >
                 顧客回饋
               </NavLink>
             </ul>

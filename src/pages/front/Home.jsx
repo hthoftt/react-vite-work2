@@ -1,10 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
+import axios from "axios";
 
 const Home = () => {
   const colRef = useRef(null);
   const bodyImgRef = useRef(null);
-  const { allProducts } = useOutletContext();
+  const cardRef = useRef(null);
+  const { allProducts, feedback } = useOutletContext();
 
   useEffect(() => {
     const cards = colRef.current.querySelectorAll(".col");
@@ -42,12 +44,37 @@ const Home = () => {
     if (bodyImgRef.current) {
       observer2.observe(bodyImgRef.current);
     }
-
     return () => {
       observer1.disconnect();
       observer2.disconnect();
     };
   }, [allProducts]);
+
+  useEffect(() => {
+    const cards = cardRef.current.querySelectorAll(".card");
+    if (cards.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = Array.from(cards).indexOf(entry.target);
+            setTimeout(() => {
+              entry.target.classList.add("show");
+            }, index * 300); // 每張卡片延遲 300ms
+            observer.unobserve(entry.target); // 只解除該卡片的監聽
+          }
+        });
+      },
+      { threshold: 0.2 },
+    );
+
+    cards.forEach((card) => observer.observe(card)); // ✅ 逐一監聽每張卡片
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [feedback]);
+
   return (
     <div className="home lxgw-wenkai-tc-regular">
       <div className="body1">
@@ -125,6 +152,37 @@ const Home = () => {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+      <div className="blog">
+        <div className="blog-title">
+          <div className="blog-title-1">顧客回饋</div>
+        </div>
+        <div className="blogCard" ref={cardRef}>
+          {feedback?.map((mes) => {
+            const backToDate = new Date(mes.create_at * 1000);
+            const messageData = backToDate.toISOString().slice(5, 10);
+            if (mes.isPublic) {
+              return (
+                <div className="card mb-3" key={mes.id}>
+                  <div className="card-body">
+                    <div className="body-title">
+                      <i className="bi bi-person-circle"></i>
+                      <div>
+                        <div className="form-floating card-title">
+                          {mes.title}
+                        </div>
+                        <div>{messageData}</div>
+                      </div>
+                    </div>
+                    <div className="form-floating my-3 card-description">
+                      {mes.description}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+          })}
         </div>
       </div>
     </div>

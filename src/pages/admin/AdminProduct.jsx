@@ -21,6 +21,8 @@ const AdminProducts = () => {
   const [tempData, setTempData] = useState({});
   // 載入api錯誤訊息
   const [err, setErr] = useState([]);
+  // 刪除狀態
+  const [isLording, setIsLording] = useState(false);
 
   useEffect(() => {
     productModal.current = new Modal("#productModal", { backdrop: "static" });
@@ -41,6 +43,7 @@ const AdminProducts = () => {
 
   // --api 刪除單筆資料
   const deleteData = async (id) => {
+    setIsLording(true);
     try {
       const res = await axios.delete(
         `/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/product/${id}`,
@@ -50,8 +53,9 @@ const AdminProducts = () => {
         closeDeleteModal();
         getAllData(page);
       }
+      setIsLording(false);
     } catch (err) {
-      // console.error(err.response);
+      setIsLording(false);
       return;
     }
   };
@@ -59,7 +63,11 @@ const AdminProducts = () => {
   // 開啟/關閉ProductsModal面版
   const openDataModal = (type, product) => {
     setType(type);
-    setTempData(product);
+    if (type === "create") {
+      setTempData({}); // 先清空
+    } else {
+      setTempData(product);
+    }
     setErr([]);
     productModal.current?.show();
   };
@@ -89,9 +97,10 @@ const AdminProducts = () => {
       />
       <DeleteModal
         closeDeleteModal={closeDeleteModal}
-        DeleteData={deleteData}
+        deleteData={deleteData}
         id={tempData?.id}
         title={tempData?.title}
+        isLording={isLording}
       />
       <div className="d-flex justify-content-between align-items-center m-5">
         <h2 className="fw-bold">商品頁</h2>
@@ -109,8 +118,8 @@ const AdminProducts = () => {
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">類別</th>
-            <th scope="col">類別</th>
+            <th scope="col">類別1</th>
+            <th scope="col">類別2</th>
             <th scope="col">圖片</th>
             <th scope="col">商品</th>
             <th scope="col">原價</th>
