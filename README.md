@@ -3,6 +3,7 @@
 二手潮流服飾共享平台,包含前台購物流程與後台管理系統,串接 API 取得 token 驗證,可管理商品與訂單。
 
 [線上 Demo](https://hthoftt.github.io/react-vite-work2/)
+[後台 Demo](https://hthoftt.github.io/react-vite-work2/login)
 
 <!-- 補一張截圖:把圖片放進 repo,再取消下一行註解 -->
 <!-- ![畫面截圖](./screenshot.png) -->
