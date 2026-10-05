@@ -117,7 +117,7 @@ const FeedbackModal = ({
           <div className="modal-content">
             <div className="modal-header bg-success">
               <h1 className="modal-title fs-5 text-light fw-bold">
-                {type === "create" ? "Create Feedback" : `Edit ${tempData.title}`}
+                {type === "create" ? "新增 顧客回饋" : `編輯 ${tempData.title}`}
               </h1>
               <button
                 type="button"
