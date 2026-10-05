@@ -33,7 +33,7 @@ export function handleSuccessMessage(dispatch) {
   });
   setTimeout(() => {
     dispatch({ type: "CLEAR_MESSAGE" });
-  }, 2000);
+  }, 1000);
 }
 
 // 商品數量更新的訊息
@@ -44,7 +44,7 @@ export function handleUpdatedMessage(dispatch) {
   });
   setTimeout(() => {
     dispatch({ type: "CLEAR_MESSAGE" });
-  }, 2000);
+  }, 1000);
 }
 
 // 商品刪除的訊息
@@ -55,5 +55,5 @@ export function handleDeleteMessage(dispatch) {
   });
   setTimeout(() => {
     dispatch({ type: "CLEAR_MESSAGE" });
-  }, 2000);
+  }, 1000);
 }
