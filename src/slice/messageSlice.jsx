@@ -1,50 +1,35 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+// 全站通知訊息(toast),以陣列存放可同時顯示多則
 const messageSlice = createSlice({
   name: "message",
   initialState: [],
   reducers: {
-    createMessage(state, action) {
-      if (action.payload.success) {
-        state.push({
-          id: action.payload.id,
-          type: "success",
-          title: "加入成功",
-          text: action.payload.message,
-        });
-      } else {
-        state.push({
-          id: action.payload.id,
-          type: "danger",
-          title: "失敗",
-          text: Array.isArray(action.payload?.message)
-            ? action.payload?.message.join("、")
-            : action.payload?.message,
-        });
-      }
+    addMessage(state, action) {
+      state.push(action.payload);
     },
     removeMessage(state, action) {
       const index = state.findIndex((item) => item.id === action.payload);
-      state.splice(index, 1);
+      if (index !== -1) {
+        state.splice(index, 1);
+      }
     },
   },
 });
 
-export const createAsyncMessage = createAsyncThunk(
-  "message/createAsyncMessage",
-  async function (payload, { dispatch, requestId }) {
-    dispatch(
-      messageSlice.actions.createMessage({
-        ...payload,
-        id: requestId,
-      }),
-    );
+export const { addMessage, removeMessage } = messageSlice.actions;
+
+// 顯示一則訊息,2.5 秒後自動移除
+// 用法:dispatch(pushMessage({ type: "success", text: "已加入購物車" }))
+export const pushMessage = createAsyncThunk(
+  "message/pushMessage",
+  async ({ type = "success", text }, { dispatch, requestId }) => {
+    dispatch(addMessage({ id: requestId, type, text }));
     setTimeout(() => {
-      dispatch(messageSlice.actions.removeMessage(requestId));
-    }, 3000);
+      dispatch(removeMessage(requestId));
+    }, 2500);
   },
 );
 
-export const { createMessage } = messageSlice.actions;
-
-export default messageSlice.reducer;
+const messageReducer = messageSlice.reducer;
+export default messageReducer;

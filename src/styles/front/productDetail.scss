@@ -1,4 +1,4 @@
-.container{
+.productDetail .container{
     padding-top: 150px;
 
     i{
@@ -45,7 +45,7 @@
 }
 
 @media(max-width:440px){
-    .container{
+    .productDetail .container{
         padding-top: 108px;
         .row{
             display: flex;

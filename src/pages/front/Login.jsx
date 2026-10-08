@@ -1,41 +1,34 @@
 import axios from "axios";
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { getErrorData } from "../../api";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [isLording, setIsLording] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState({ username: "", password: "" });
 
-  // 建立帳號密碼
-  const [data, setData] = useState({
-    username: "tonyhung92568@gmail.com",
-    password: "12345678",
-  });
-
-  // 讀取使用者輸入的值並回傳給data
+  // 讀取使用者輸入的值
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
   };
 
-  // 綁送出按鈕 抓取登入api資料
-  const submit = async () => {
+  // 送出表單(按 Enter 也會送出)
+  const submit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage("");
     try {
       const res = await axios.post("/v2/admin/signin", data);
       const { token, expired } = res.data;
-      document.cookie = `hexToken=${token}; expires=${new Date(expired)};`;
-      if (res.data.success) {
-        navigate("/admin/products");
-      }
+      document.cookie = `hexToken=${token}; expires=${new Date(expired).toUTCString()};`;
+      navigate("/admin/products");
     } catch (err) {
-      setIsLording(err.response?.data);
-    }
-  };
-
-  // 連動鍵盤Enter 觸發submit
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      submit();
+      setErrorMessage(getErrorData(err).message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -46,7 +39,7 @@ const Login = () => {
           <div className="navbar-brand fw-bold">
             <img
               src={`${import.meta.env.BASE_URL}logo.png`}
-              alt="logo"
+              alt="借我穿一下"
               style={{ width: "100px" }}
             />
           </div>
@@ -54,14 +47,13 @@ const Login = () => {
       </nav>
       <div className="login">
         <div className="row justify-content-center align-items-center login-w">
-          <div className="col-md-4">
+          <form className="col-md-4" onSubmit={submit}>
             <h2 className="my-3">登入帳號</h2>
-            <div
-              className={`alert alert-danger ${isLording.message ? "d-block" : "d-none"}`}
-              role="alert"
-            >
-              {isLording.message}
-            </div>
+            {errorMessage && (
+              <div className="alert alert-danger" role="alert">
+                {errorMessage}
+              </div>
+            )}
             <div className="mb-3">
               <label htmlFor="email" className="form-label w-100">
                 Email
@@ -70,10 +62,12 @@ const Login = () => {
                 type="email"
                 className="form-control"
                 id="email"
-                placeholder="example@gmail.com"
-                onChange={handleChange}
                 name="username"
+                placeholder="example@gmail.com"
+                autoComplete="username"
                 value={data.username}
+                onChange={handleChange}
+                required
               />
             </div>
             <div className="mb-3">
@@ -84,21 +78,17 @@ const Login = () => {
                 type="password"
                 className="form-control mb-5"
                 id="password"
-                placeholder=". . ."
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
                 name="password"
+                autoComplete="current-password"
                 value={data.password}
+                onChange={handleChange}
+                required
               />
             </div>
-            <button
-              type="button"
-              className="btn btn-dark w-100 py-2"
-              onClick={submit}
-            >
-              送出
+            <button type="submit" className="btn btn-dark w-100 py-2" disabled={isLoading}>
+              {isLoading ? "登入中..." : "送出"}
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </>

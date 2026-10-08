@@ -1,26 +1,24 @@
 import { useState } from "react";
-import axios from "axios";
+import { useDispatch } from "react-redux";
+import { pushMessage } from "../../slice/messageSlice";
+import { adminApi, getErrorData } from "../../api";
 
-const OrdersModal = ({
-  closeDataModal,
-  getAllData,
-  setTempData,
-  tempData,
-  page,
-}) => {
-  // 載入狀態 綁住disabled
-  const [isLogin, setIsLogin] = useState(false);
+const OrdersModal = ({ closeDataModal, getAllData, setTempData, tempData }) => {
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const submit = async () => {
-    setIsLogin(true);
-    await axios.put(
-      `/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/order/${tempData.id}`,
-      { data: { ...tempData } },
-    );
-    // console.log(res);
-    closeDataModal();
-    getAllData(page);
-    setIsLogin(false);
+    setIsLoading(true);
+    try {
+      await adminApi.put(`/order/${tempData.id}`, { data: { ...tempData } });
+      dispatch(pushMessage({ text: "訂單已更新" }));
+      closeDataModal();
+      getAllData();
+    } catch (err) {
+      dispatch(pushMessage({ type: "danger", text: getErrorData(err).message }));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,7 +43,7 @@ const OrdersModal = ({
                 className="btn-close"
                 aria-label="Close"
                 onClick={closeDataModal}
-                disabled={isLogin}
+                disabled={isLoading}
               ></button>
             </div>
             <div className="modal-body"></div>
@@ -102,7 +100,7 @@ const OrdersModal = ({
                     setTempData({ ...tempData, is_paid: e.target.checked })
                   }
                   checked={tempData.is_paid}
-                  disabled={isLogin}
+                  disabled={isLoading}
                 />{" "}
                 <label htmlFor="is_paid" className="form-check-label  mx-2">
                   {tempData.is_paid ? "已付款" : "未付款"}
@@ -116,7 +114,7 @@ const OrdersModal = ({
                 type="button"
                 className="btn btn-secondary"
                 onClick={closeDataModal}
-                disabled={isLogin}
+                disabled={isLoading}
               >
                 關閉
               </button>
@@ -124,7 +122,7 @@ const OrdersModal = ({
                 type="button"
                 className="btn btn-success"
                 onClick={submit}
-                disabled={isLogin}
+                disabled={isLoading}
               >
                 儲存
               </button>

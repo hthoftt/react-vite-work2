@@ -1,38 +1,37 @@
-import { useContext } from "react";
-import { MessageContext } from "../../store/messageStore";
-// 商品新增成功或失敗的 toasts元件
-const MessageToasts = () => {
-  // const [message, setMessage] = useState({});
-  const [message] = useContext(MessageContext);
+import { useDispatch, useSelector } from "react-redux";
+import { removeMessage } from "../../slice/messageSlice";
+
+// 全站 toast 通知,資料來自 Redux store
+const Message = () => {
+  const messages = useSelector((state) => state.message);
+  const dispatch = useDispatch();
 
   return (
-    <>
-      {message.type && (
+    <div
+      className="position-fixed d-flex flex-column gap-2"
+      style={{ top: "100px", right: "29px", zIndex: 1000000, width: "220px" }}
+    >
+      {messages.map((msg) => (
         <div
-          className={`position-fixed toast show text-bg-${message.type} slide-in`}
+          key={msg.id}
+          className={`toast show text-bg-${msg.type} slide-in`}
           role="alert"
           aria-live="assertive"
           aria-atomic="true"
-          style={{
-            top: "100px",
-            right: "29px",
-            zIndex: "1000000",
-            width: "200px",
-          }}
         >
           <div className="d-flex">
-            <div className="toast-body">{message.tittle}</div>
+            <div className="toast-body">{msg.text}</div>
             <button
               type="button"
-              className="btn-close me-2 m-auto"
-              data-bs-dismiss="toast"
+              className="btn-close btn-close-white me-2 m-auto"
               aria-label="Close"
+              onClick={() => dispatch(removeMessage(msg.id))}
             ></button>
           </div>
         </div>
-      )}
-    </>
+      ))}
+    </div>
   );
 };
 
-export default MessageToasts;
+export default Message;

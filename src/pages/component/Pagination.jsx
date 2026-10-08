@@ -1,52 +1,36 @@
-import { Link } from "react-router-dom";
-
-const Pagination = ({ pagination, getAllData }) => {
+// 分頁元件:onPageChange(頁數) 由使用的頁面決定要做什麼
+const Pagination = ({ pagination, onPageChange }) => {
+  const { current_page = 1, total_pages = 0, has_pre, has_next } = pagination;
 
   return (
-    <nav aria-label="Page navigation example">
+    <nav aria-label="分頁">
       <ul className="pagination justify-content-center">
-        <li className={`page-item ${pagination.has_pre ? "" : "disabled"}`}>
-          <Link
+        <li className={`page-item ${has_pre ? "" : "disabled"}`}>
+          <button
+            type="button"
             className="page-link"
-            onClick={(e) => {
-              e.preventDefault();
-              getAllData(pagination.current_page - 1);
-            }}
-            to={"/"}
+            onClick={() => onPageChange(current_page - 1)}
+            aria-label="上一頁"
           >
             <i className="bi bi-arrow-left"></i>
-          </Link>
+          </button>
         </li>
-        {[...new Array(pagination.total_pages)].map((_, i) => {
-          return (
-            <li
-              key={i}
-              className={`page-item ${i + 1 === pagination.current_page ? "active" : ""}`}
-            >
-              <Link
-                className="page-link"
-                onClick={(e) => {
-                  e.preventDefault();
-                  getAllData(i + 1);
-                }}
-                to={"/"}
-              >
-                {i + 1}
-              </Link>
-            </li>
-          );
-        })}
-        <li className={`page-item ${pagination.has_next ? "" : "disabled"}`}>
-          <Link
+        {Array.from({ length: total_pages }, (_, i) => i + 1).map((n) => (
+          <li key={n} className={`page-item ${n === current_page ? "active" : ""}`}>
+            <button type="button" className="page-link" onClick={() => onPageChange(n)}>
+              {n}
+            </button>
+          </li>
+        ))}
+        <li className={`page-item ${has_next ? "" : "disabled"}`}>
+          <button
+            type="button"
             className="page-link"
-            onClick={(e) => {
-              e.preventDefault();
-              getAllData(pagination.current_page + 1);
-            }}
-            to={"/"}
+            onClick={() => onPageChange(current_page + 1)}
+            aria-label="下一頁"
           >
             <i className="bi bi-arrow-right"></i>
-          </Link>
+          </button>
         </li>
       </ul>
     </nav>
