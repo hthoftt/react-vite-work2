@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 const OrdersModal = ({
@@ -11,13 +11,9 @@ const OrdersModal = ({
   // 載入狀態 綁住disabled
   const [isLogin, setIsLogin] = useState(false);
 
-  useEffect(() => {
-    console.log(tempData);
-  }, [tempData]);
-
   const submit = async () => {
     setIsLogin(true);
-    const res = await axios.put(
+    await axios.put(
       `/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/order/${tempData.id}`,
       { data: { ...tempData } },
     );
@@ -73,7 +69,7 @@ const OrdersModal = ({
                 className="col-md-10 text-wrap"
                 style={{ wordBreak: "break-word" }}
               >
-                {`留言 ${tempData?.message}`}
+                {`留言 ${tempData?.message || tempData?.user?.message || "無"}`}
               </div>
             </div>
             <br />
@@ -89,7 +85,7 @@ const OrdersModal = ({
                     className="d-flex justify-content-around"
                     key={product.id}
                   >
-                    <div className="col-md-5">{product.id}</div>
+                    <div className="col-md-5">{product.product?.title || product.id}</div>
                     <div className="col-md-3">{product.qty}</div>
                   </div>
                 );

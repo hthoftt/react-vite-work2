@@ -155,7 +155,7 @@ const Checkout = () => {
               <input
                 type="text"
                 className="form-control"
-                {...register("user.message")}
+                {...register("message")}
                 placeholder="..."
               />
             </div>
