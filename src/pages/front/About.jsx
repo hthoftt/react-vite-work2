@@ -23,7 +23,7 @@ const About = () => {
 
   useEffect(() => {
     const cards = cardsRef.current.querySelectorAll(".card");
-    const obseverCards = new IntersectionObserver(
+    const observeCards = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -32,19 +32,19 @@ const About = () => {
                 card.classList.add("show");
               }, i * 400);
             });
-            obseverCards.disconnect();
+            observeCards.disconnect();
           }
         });
       },
       { threshold: 0.2 },
     );
 
-    const obseverStoryImg = new IntersectionObserver(
+    const observeStoryImg = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             storyImgRef.current.classList.add("show");
-            obseverStoryImg.disconnect();
+            observeStoryImg.disconnect();
           }
         });
       },
@@ -52,15 +52,15 @@ const About = () => {
     );
 
     if (cardsRef.current) {
-      obseverCards.observe(cardsRef.current);
+      observeCards.observe(cardsRef.current);
     }
     if (storyImgRef.current) {
-      obseverStoryImg.observe(storyImgRef.current);
+      observeStoryImg.observe(storyImgRef.current);
     }
 
     return () => {
-      obseverCards.disconnect();
-      obseverStoryImg.disconnect();
+      observeCards.disconnect();
+      observeStoryImg.disconnect();
     };
   }, []);
 
@@ -69,7 +69,7 @@ const About = () => {
       <div className="about">
         <div className="about-text1">
           <div className="about-text1-1">起源</div>
-          <div className="about-text1-2">始於 1992</div>
+          <div className="about-text1-2">始於 1998</div>
         </div>
         <div className="about-text2">
           「借我穿一下」以永續時尚為核心理念，推廣共享、再利用的潮流文化。讓每件衣服不只是物品，而是故事的延續。透過租借與交換，減少浪費、創造價值，讓時尚成為一種環保又有態度的生活方式。
@@ -85,7 +85,7 @@ const About = () => {
         <div className="story-text2">
           <img
             src="https://images.unsplash.com/photo-1598681801564-6c576313d410?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt=""
+            alt="品牌故事"
             className="story-img"
             ref={storyImgRef}
           />
@@ -93,24 +93,25 @@ const About = () => {
       </div>
       <div className="associats" ref={cardsRef}>
         <div className="associats-name">創辦人</div>
-        {team.map((num,i) => {
+        {team.map((member) => {
           return (
-            <div className="card mb-3" key={i}>
+            <div className="card mb-3" key={member.name}>
               <div className="row g-0">
                 <div className="col-md-4">
                   <img
-                    src={num.img}
+                    src={member.img}
                     className="img-fluid rounded-start"
-                    alt="圖片"
+                    alt={member.name}
+                    loading="lazy"
                   />
                 </div>
                 <div className="col-md-8">
                   <div className="card-body">
-                    <h5 className="card-title">{num.name}</h5>
+                    <h5 className="card-title">{member.name}</h5>
                     <p className="card-text">
                       <i>合夥人</i>
                       <br />
-                      {num.text}
+                      {member.text}
                     </p>
                   </div>
                 </div>

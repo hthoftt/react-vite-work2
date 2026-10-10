@@ -1,65 +1,69 @@
-import axios from "axios";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
-import {
-  MessageContext,
-  handleUpdatedMessage,
-  handleDeleteMessage,
-} from "../../store/messageStore";
+import { useDispatch } from "react-redux";
+import { pushMessage } from "../../slice/messageSlice";
+import { api, getErrorData } from "../../api";
 
-const Navbar = ({ cartPoduct, quantity, setQuantity, carts }) => {
-  const [message, dispatch] = useContext(MessageContext);
-  const [open, setOpen] = useState(false);
-  const [hidden, setHidden] = useState(false); // 漢堡狀態
-  const [cartShow, setCartShow] = useState(false); // 開啟關閉購物車
-  const [isLording, setIsLording] = useState(false);
-  let lastScrollY = useRef(24);
+const navItems = [
+  { to: "/", label: "首頁" },
+  { to: "/about", label: "起源" },
+  { to: "/store", label: "實體店面" },
+];
+
+const Navbar = ({ cart, getCart }) => {
+  const dispatch = useDispatch();
+  const [open, setOpen] = useState(false); // 漢堡選單
+  const [hidden, setHidden] = useState(false); // 往下捲動時隱藏導覽列
+  const [cartShow, setCartShow] = useState(false); // 側邊購物車
+  const [isLoading, setIsLoading] = useState(false);
+  const lastScrollY = useRef(0);
+
+  const cartItems = cart.carts || [];
 
   // 更新購物車數量
-  const upDateCart = async (product, qty) => {
+  const updateCart = async (item, qty) => {
     if (qty < 1) return;
-    setIsLording(true);
-    const data = {
-      data: {
-        product_id: product.product_id,
-        qty: qty,
-      },
-    };
-    const res = await axios.put(
-      `/v2/api/${import.meta.env.VITE_APP_API_PATH}/cart/${product.id}`,
-      data,
-    );
-    console.log("更新購物車:", res);
-    carts();
-    setIsLording(false);
-    handleUpdatedMessage(dispatch);
+    setIsLoading(true);
+    try {
+      await api.put(`/cart/${item.id}`, {
+        data: { product_id: item.product_id, qty },
+      });
+      await getCart();
+      dispatch(pushMessage({ text: "商品數量已更新" }));
+    } catch (err) {
+      dispatch(pushMessage({ type: "danger", text: getErrorData(err).message }));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // 刪除購物車單筆資料
-  const deleteCart = async (product) => {
-    setIsLording(true);
-    const res = await axios.delete(
-      `/v2/api/${import.meta.env.VITE_APP_API_PATH}/cart/${product.id}`,
-    );
-    console.log("刪除單筆購物車:", res);
-    carts();
-    setIsLording(false);
-    handleDeleteMessage(dispatch);
+  const deleteCartItem = async (item) => {
+    setIsLoading(true);
+    try {
+      await api.delete(`/cart/${item.id}`);
+      await getCart();
+      dispatch(pushMessage({ type: "danger", text: "商品已刪除" }));
+    } catch (err) {
+      dispatch(pushMessage({ type: "danger", text: getErrorData(err).message }));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > lastScrollY.current) {
-        setHidden(true);
-      } else {
-        setHidden(false);
-      }
+      setHidden(window.scrollY > lastScrollY.current && window.scrollY > 24);
       lastScrollY.current = window.scrollY;
-      // console.log(lastScrollY.current);
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const goTop = () => {
+    setOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <>
@@ -69,183 +73,131 @@ const Navbar = ({ cartPoduct, quantity, setQuantity, carts }) => {
           <img
             src={`${import.meta.env.BASE_URL}logo.png`}
             className="logo"
-            alt="logo"
+            alt="借我穿一下"
           />
         </Link>
         <ul className={`ul ${open ? "show" : ""}`}>
-          <NavLink
-            className="h5"
-            to={"/"}
-            onClick={() => {
-              setOpen(false);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-          >
-            首頁
-          </NavLink>
-          <NavLink
-            className="h5"
-            to={"/about"}
-            onClick={() => {
-              setOpen(false);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-          >
-            起源
-          </NavLink>
-          <NavLink
-            className="h5"
-            to={"/blog"}
-            onClick={() => {
-              setOpen(false);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-          >
-            實體店面
-          </NavLink>
-          <NavLink
-            className="h5 products"
-            to={"/products"}
-            onClick={() => {
-              setOpen(false);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-          >
+          {navItems.map((item) => (
+            <NavLink key={item.to} className="h5" to={item.to} onClick={goTop}>
+              {item.label}
+            </NavLink>
+          ))}
+          <NavLink className="h5 products" to={"/products"} onClick={goTop}>
             Products
             <i className="bi bi-arrow-right"></i>
           </NavLink>
         </ul>
-        <div
-          className="ms-4"
-          onClick={() => {
-            setCartShow(!cartShow);
-          }}
-          style={{ cursor: "pointer" }}
+        <button
+          type="button"
+          className="btn border-0 ms-4 p-0"
+          onClick={() => setCartShow(!cartShow)}
+          aria-label="開啟購物車"
         >
           <i className="bi bi-cart3 position-relative fs-4">
-            {" "}
             <span
               className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
               style={{ fontSize: "0.8rem" }}
             >
-              {Object.values(cartPoduct.carts || []).length || 0}
+              {cartItems.length}
             </span>
           </i>
-        </div>
-        <div className="hambuger" onClick={() => setOpen(!open)}>
+        </button>
+        <button
+          type="button"
+          className="hambuger btn border-0 p-0"
+          onClick={() => setOpen(!open)}
+          aria-label="開啟選單"
+        >
           {open ? (
             <i className="bi bi-triangle"></i>
           ) : (
             <i className="bi bi-list"></i>
           )}
-        </div>
+        </button>
       </div>
       {/* 購物車 */}
       <div className={`cart ${cartShow ? "show" : ""}`}>
-        <i
-          className="bi bi-x-lg dash-icon"
+        <button
+          type="button"
+          className="btn border-0 dash-icon"
           onClick={() => setCartShow(false)}
-        ></i>
+          aria-label="關閉購物車"
+        >
+          <i className="bi bi-x-lg"></i>
+        </button>
         <div className="cart-title mx-5">
           <div>購物車清單</div>
-          <div>NT${cartPoduct.total || 0}</div>
+          <div>NT${cart.final_total || 0}</div>
         </div>
         <ul>
-          {Object.values(cartPoduct.carts || []).length ? (
-            Object.values(cartPoduct.carts || []).map((product, i) => {
-              return (
-                <li className="mb-3" key={i}>
-                  <div className="cart-1 row">
+          {cartItems.length ? (
+            cartItems.map((item) => (
+              <li className="mb-3" key={item.id}>
+                <div className="cart-1 row">
+                  <button
+                    type="button"
+                    className="btn border-0 col-1 mx-2 fs-5"
+                    onClick={() => deleteCartItem(item)}
+                    disabled={isLoading}
+                    aria-label="刪除商品"
+                  >
+                    <i className="bi bi-trash3"></i>
+                  </button>
+                  <img
+                    src={item.product.imageUrl}
+                    alt={item.product.title}
+                    className="col-4 cart-img"
+                  />
+                  <div className="fs-6 cart-text text-center col-3">
+                    <Link
+                      className="text-dark"
+                      to={`/products/${item.product_id}`}
+                      onClick={() => setCartShow(false)}
+                    >
+                      {item.product.title}
+                    </Link>
+                    <h3 className="mt-2">NT${item.product.price}</h3>
+                  </div>
+                  <div className="d-flex bg-light rounded col-4">
                     <button
                       type="button"
-                      className="btn border-0 col-1 mx-2 fs-5"
+                      className="btn border-0"
+                      onClick={() => updateCart(item, item.qty - 1)}
+                      disabled={isLoading || item.qty <= 1}
+                      aria-label="減少數量"
                     >
-                      <i
-                        className="bi bi-trash3"
-                        onClick={() => deleteCart(product)}
-                        disabled={isLording}
-                      ></i>
+                      <i className="bi bi-dash-lg"></i>
                     </button>
-                    <img
-                      src={product.product.imageUrl}
-                      alt="圖片"
-                      className="col-4 cart-img"
-                    />
-                    <div className="fs-6 cart-text text-center col-3">
-                      <Link
-                        className="text-dark"
-                        to={`/products/${product.product_id}`}
-                        onClick={() => setCartShow(false)}
-                      >
-                        {product.product.title}
-                      </Link>
-                      <h3 className="mt-2">NT${product.product.price}</h3>
-                    </div>
-                    <div className="d-flex bg-light rounded col-4">
-                      <div>
-                        <button type="button" className="btn border-0">
-                          <i
-                            className="bi bi-plus-lg"
-                            onClick={() => upDateCart(product, product.qty + 1)}
-                            disabled={isLording}
-                          ></i>
-                        </button>
-                      </div>
-                      <input
-                        type="button"
-                        className="btn text-center"
-                        style={{ width: "100%", color: "rgb(77, 80, 79)" }}
-                        value={product.qty}
-                        readOnly
-                      />
-
-                      <div>
-                        <button type="button" className="btn border-0">
-                          <i
-                            className="bi bi-dash-lg"
-                            onClick={() => upDateCart(product, product.qty - 1)}
-                            disabled={isLording}
-                          ></i>
-                        </button>
-                      </div>
-                    </div>
+                    <span
+                      className="btn text-center w-100"
+                      style={{ color: "rgb(77, 80, 79)", cursor: "default" }}
+                    >
+                      {item.qty}
+                    </span>
+                    <button
+                      type="button"
+                      className="btn border-0"
+                      onClick={() => updateCart(item, item.qty + 1)}
+                      disabled={isLoading}
+                      aria-label="增加數量"
+                    >
+                      <i className="bi bi-plus-lg"></i>
+                    </button>
                   </div>
-                </li>
-              );
-            })
+                </div>
+              </li>
+            ))
           ) : (
             <p className="ms-4">購物車尚未有商品哦!!</p>
           )}
           <li>
-            {Object.values(cartPoduct.carts || []).length ? (
-              <Link
-                to={"/checkout"}
-                style={{ textDecoration: "none" }}
-                onClick={() => setCartShow(false)}
-              >
-                <button
-                  type="button"
-                  className="btn btn-outline-dark w-100 mt-5"
-                  disabled={isLording}
-                >
-                  去買單
-                </button>
-              </Link>
-            ) : (
-              <Link
-                to={"/products"}
-                style={{ textDecoration: "none" }}
-                onClick={() => setCartShow(false)}
-              >
-                <button
-                  type="button"
-                  className="btn btn-outline-dark w-100 mt-5"
-                  disabled={isLording}
-                >
-                  去逛逛
-                </button>
-              </Link>
-            )}
+            <Link
+              to={cartItems.length ? "/checkout" : "/products"}
+              className={`btn btn-outline-dark w-100 mt-5 ${isLoading ? "disabled" : ""}`}
+              onClick={() => setCartShow(false)}
+            >
+              {cartItems.length ? "去買單" : "去逛逛"}
+            </Link>
           </li>
         </ul>
       </div>

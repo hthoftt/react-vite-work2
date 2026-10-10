@@ -1,5 +1,17 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { adminApi, getErrorData } from "../../api";
+
+// 新增時的空白資料,日期預設今天
+const emptyFeedback = () => ({
+  title: "",
+  description: "",
+  image: "",
+  tag: ["tag1"],
+  create_at: Math.floor(Date.now() / 1000),
+  author: "admin",
+  isPublic: false,
+  content: "",
+});
 
 const FeedbackModal = ({
   closeDataModal,
@@ -11,78 +23,50 @@ const FeedbackModal = ({
   setErr,
 }) => {
   // 載入狀態 綁住disabled
-  const [isLogin, setIsLogin] = useState(false);
-  const now = new Date();
-  const timestamp = Math.floor(now.getTime() / 1000);
+  const [isLoading, setIsLoading] = useState(false);
 
   // 建空資料
-  const [data, setData] = useState({
-    title: "",
-    description: "",
-    image: "",
-    tag: ["tag1"],
-    create_at: timestamp,
-    author: "alice",
-    isPublic: false,
-    content: "",
-  });
+  const [data, setData] = useState(emptyFeedback());
 
   useEffect(() => {
     if (type === "create") {
-      setData({
-        title: "",
-        description: "",
-        image: "",
-        tag: ["tag1"],
-        create_at: timestamp,
-        author: "alice",
-        isPublic: false,
-        content: "",
-      });
+      setData(emptyFeedback());
     } else {
       setData({ ...tempData });
     }
   }, [tempData, type]);
 
   const closeModal = () => {
-    setData({
-      title: "",
-      description: "",
-      image: "",
-      tag: ["tag1"],
-      create_at: timestamp,
-      author: "alice",
-      isPublic: false,
-      content: "",
-    });
+    setData(emptyFeedback());
     closeDataModal();
   };
 
   // --api create或edit資料
   const submit = async (type) => {
-    setIsLogin(true);
-    let method = "post";
-    let api = `/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/article`;
+    setIsLoading(true);
     try {
       if (type === "edit") {
-        method = "put";
-        api = `/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/article/${data.id}`;
+        await adminApi.put(`/article/${data.id}`, { data });
+      } else {
+        await adminApi.post("/article", { data });
       }
-      await axios[method](api, { data: data });
-      console.log(data);
       closeDataModal();
       getAllData(page);
-      setIsLogin(false);
     } catch (err) {
-      console.error(err.response.data.message);
-      setErr(err.response.data.message);
-      setIsLogin(false);
+      // API 錯誤訊息可能是字串或陣列
+      const { message } = getErrorData(err);
+      setErr(
+        (Array.isArray(message) ? message : [message])
+          .map((item) => item.replace(" 屬性不得為空", " 為必填"))
+          .join("、"),
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // 讀取使用者輸入的資料並傳到data
   const handleChange = (e) => {
-    // console.log(e);
     const { id, value } = e.target;
     if (id === "isPublic") {
       setData({ ...data, [id]: e.target.checked });
@@ -131,16 +115,14 @@ const FeedbackModal = ({
                     setData({ ...tempData });
                   }
                 }}
-                disabled={isLogin}
+                disabled={isLoading}
               ></button>
             </div>
             <div className="modal-body">
               <form className="row g-3">
                 {
                   <div className="col-md-12 text-danger">
-                    {err
-                      .map((item) => item.replace(" 屬性不得為空", " is required"))
-                      .join("、")}
+                    {err}
                   </div>
                 }
                 <div className="col-md-12">
@@ -154,7 +136,7 @@ const FeedbackModal = ({
                     placeholder="..."
                     onChange={handleChange}
                     value={data.title}
-                    disabled={isLogin}
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="col-md-12">
@@ -167,7 +149,7 @@ const FeedbackModal = ({
                     id="create_at"
                     onChange={handleChange}
                     value={formatDate(data.create_at)}
-                    disabled={isLogin}
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="col-md-12">
@@ -181,7 +163,7 @@ const FeedbackModal = ({
                     placeholder="..."
                     onChange={handleChange}
                     value={data.description}
-                    disabled={isLogin}
+                    disabled={isLoading}
                   />
                 </div>
                 {/* <div className="col-md-12">
@@ -195,7 +177,7 @@ const FeedbackModal = ({
                     placeholder="..."
                     onChange={handleChange}
                     value={data.content}
-                    disabled={isLogin}
+                    disabled={isLoading}
                   />
                 </div> */}
               </form>
@@ -208,7 +190,7 @@ const FeedbackModal = ({
                   id="isPublic"
                   onChange={handleChange}
                   checked={!!data.isPublic}
-                  disabled={isLogin}
+                  disabled={isLoading}
                 />
                 <label className="form-check-label mx-2" htmlFor="isPublic">
                   公開
@@ -225,17 +207,17 @@ const FeedbackModal = ({
                     setData({ ...tempData });
                   }
                 }}
-                disabled={isLogin}
+                disabled={isLoading}
               >
-                Close
+                關閉
               </button>
               <button
                 type="button"
                 className="btn btn-success"
                 onClick={() => submit(type)}
-                disabled={isLogin}
+                disabled={isLoading}
               >
-                Save
+                儲存
               </button>
             </div>
           </div>

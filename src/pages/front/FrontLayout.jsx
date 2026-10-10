@@ -1,127 +1,102 @@
 import Navbar from "./Navbar";
-import { Link, useLocation } from "react-router-dom";
 import { Outlet } from "react-router-dom";
-import { useContext, useEffect, useReducer, useState } from "react";
-import axios from "axios";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Message from "../component/Message";
-import {
-  MessageContext,
-  initState,
-  messageReducer,
-} from "../../store/messageStore";
+import { api } from "../../api";
+
+// 收藏清單存在 localStorage,重新整理後仍保留
+const FAVORITES_KEY = "favorites";
+const loadFavorites = () => {
+  try {
+    return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+  } catch {
+    return [];
+  }
+};
 
 const FrontLayout = () => {
-  const reducer = useReducer(messageReducer, initState);
-  const [products, setProducts] = useState([]);
-  const [allProducts, setAllProducts] = useState([]);
-  const [currentFilter, setCurrentFilter] = useState("全部");
-  const [cartPoduct, setCartPoduct] = useState([]);
-  const [quantity, setQuantity] = useState(1); // 使用者選擇的商品數量
-  const location = useLocation();
-  const [feedback, setFaceback] = useState([]);
+  const [rawProducts, setRawProducts] = useState([]);
+  const [favorites, setFavorites] = useState(loadFavorites);
+  const [cart, setCart] = useState({});
+  const [feedback, setFeedback] = useState([]);
 
-  // 取商客戶端商品資料,用updatedProducts新增資料屬性save,存取資料updatedProducts
-  const getProducts = async () => {
-    const res = await axios.get(
-      `/v2/api/${import.meta.env.VITE_APP_API_PATH}/products/all`,
-    );
-    const updatedProducts = res.data.products.map((p) => ({
-      ...p,
-      save: false,
-    }));
-    console.log("商品:", res);
-    setProducts(updatedProducts);
-    setAllProducts(updatedProducts);
-  };
-  // 切換典藏save狀態
-  const toggleIcon = (id) => {
-    setAllProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, save: !p.save } : p)),
-    );
-    setProducts((prev) => {
-      const updated = prev.map((p) =>
-        p.id === id ? { ...p, save: !p.save } : p,
-      );
-      if (currentFilter === "我的最愛") {
-        return updated.filter((p) => p.save);
+  // 取得購物車
+  const getCart = useCallback(async () => {
+    try {
+      const res = await api.get("/cart");
+      setCart(res.data.data);
+    } catch {
+      setCart({});
+    }
+  }, []);
+
+  // 進站時取一次商品、購物車與顧客回饋(換頁不重抓)
+  useEffect(() => {
+    (async () => {
+      try {
+        const [productsRes, feedbackRes] = await Promise.all([
+          api.get("/products/all"),
+          api.get("/articles"),
+        ]);
+        setRawProducts(productsRes.data.products);
+        setFeedback(feedbackRes.data.articles);
+      } catch {
+        setRawProducts([]);
       }
-      return updated;
-    });
-  };
-
-  const carts = async () => {
-    const res = await axios.get(
-      `/v2/api/${import.meta.env.VITE_APP_API_PATH}/cart`,
-    );
-    console.log("購物車:", res);
-    setCartPoduct(res.data.data);
-  };
-
-  // 顧客回饋api
-  const getFeedback = async () => {
-    const res = await axios.get(
-      `/v2/api/${import.meta.env.VITE_APP_API_PATH}/articles`,
-    );
-    setFaceback(res.data.articles);
-  };
+    })();
+    getCart();
+  }, [getCart]);
 
   useEffect(() => {
-    getProducts();
-    carts();
-    getFeedback();
-  }, [location.pathname]);
+    try {
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+    } catch {
+      // 無痕模式等情況無法寫入,略過
+    }
+  }, [favorites]);
+
+  // 商品加上 save(是否收藏)屬性
+  const allProducts = useMemo(
+    () => rawProducts.map((p) => ({ ...p, save: favorites.includes(p.id) })),
+    [rawProducts, favorites],
+  );
+
+  // 切換收藏
+  const toggleFavorite = (id) => {
+    setFavorites((prev) =>
+      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id],
+    );
+  };
 
   return (
-    <MessageContext.Provider value={reducer}>
+    <>
       <Message />
       <div className="frontLayout">
-        <Navbar
-          cartPoduct={cartPoduct}
-          quantity={quantity}
-          setQuantity={setQuantity}
-          carts={carts}
-        />
-        <Outlet
-          context={{
-            products,
-            setProducts,
-            allProducts,
-            setAllProducts,
-            getProducts,
-            toggleIcon,
-            currentFilter,
-            setCurrentFilter,
-            toggleIcon,
-            quantity,
-            setQuantity,
-            carts,
-            getFeedback,
-            feedback,
-            setFaceback,
-          }}
-        ></Outlet>
+        <Navbar cart={cart} getCart={getCart} />
+        <Outlet context={{ allProducts, toggleFavorite, cart, getCart, feedback }} />
         <div className="footer">
           <div className="context">
             <div className="context1">
+              <div>借我穿一下 二手潮流服飾(作品展示用,非真實店家)</div>
+              <div>新北市板橋區西門街 9 號(虛構)</div>
               <div>tonyhung92568@gmail.com</div>
-              <div>500 Terry Francine St. San Francisco, CA 94158</div>
-              <div>Tel: 123-456-7890 / Fax: 123-456-7890</div>
             </div>
             <div className="context2">
-              <div>
-                <div>Privacy Policy</div>
-                <div>Accessibility Statement</div>
-                <div>Terms & Conditions</div>
-              </div>
               <div className="mes">
-                <Link
+                <a
                   className="bi bi-facebook"
-                  to={"https://www.facebook.com/"}
-                ></Link>
-                <Link
+                  href="https://www.facebook.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                ></a>
+                <a
                   className="bi bi-instagram"
-                  to={"https://www.instagram.com/"}
-                ></Link>
+                  href="https://www.instagram.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                ></a>
               </div>
             </div>
           </div>
@@ -129,15 +104,16 @@ const FrontLayout = () => {
             <div>
               <img
                 src={`${import.meta.env.BASE_URL}logo.png`}
-                alt="logo"
-                style={{ width: "25rem", color: "white" }}
+                alt="借我穿一下"
+                style={{ width: "25rem", filter: "invert(1)" }} /* 黑色 logo 在深色頁尾反白 */
+                loading="lazy"
               />
             </div>
             <p>© 2026 HTHOFTT All Rights Reserved.</p>
           </div>
         </div>
       </div>
-    </MessageContext.Provider>
+    </>
   );
 };
 export default FrontLayout;

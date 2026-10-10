@@ -1,5 +1,4 @@
-const DeleteModal = ({ closeDeleteModal, title, id, deleteData,isLording }) => {
-  // 載入狀態 綁住disabled
+const DeleteModal = ({ closeDeleteModal, title, id, deleteData, isLoading }) => {
   return (
     <>
       <div
@@ -22,13 +21,13 @@ const DeleteModal = ({ closeDeleteModal, title, id, deleteData,isLording }) => {
                 onClick={closeDeleteModal}
               ></button>
             </div>
-            <div className="modal-body"> {title}</div>
+            <div className="modal-body">確定要刪除「{title}」嗎?</div>
             <div className="modal-footer">
               <button
                 type="button"
                 className="btn btn-secondary"
                 onClick={closeDeleteModal}
-                disabled={isLording}
+                disabled={isLoading}
               >
                 取消
               </button>
@@ -36,7 +35,7 @@ const DeleteModal = ({ closeDeleteModal, title, id, deleteData,isLording }) => {
                 type="button"
                 className="btn btn-danger"
                 onClick={() => deleteData(id)}
-                disabled={isLording}
+                disabled={isLoading}
               >
                 刪除
               </button>

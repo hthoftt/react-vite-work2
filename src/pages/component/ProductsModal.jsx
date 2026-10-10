@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { adminApi, getErrorData } from "../../api";
 
 const ProductsModal = ({
   closeDataModal,
@@ -11,7 +11,7 @@ const ProductsModal = ({
   setErr,
 }) => {
   // 載入狀態 綁住disabled
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // 建空資料
   const [data, setData] = useState({
@@ -59,56 +59,48 @@ const ProductsModal = ({
     closeDataModal();
   };
 
-  // --api 上傳file 取得後端回傳imageUrl資料並寫至data
+  // API 錯誤訊息可能是字串或陣列,統一轉成一行文字
+  const toErrorText = (err) => {
+    const { message } = getErrorData(err);
+    return Array.isArray(message) ? message.join("、") : message;
+  };
+
+  // --api 上傳圖片,取得 imageUrl 寫入 data
   const uploadFile = async (file) => {
-    setIsLogin(true);
-    if (!file) {
-      return;
-    }
+    if (!file) return;
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("file-to-upload", file);
     try {
-      const res = await axios.post(
-        `/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/upload`,
-        formData,
-      );
-      const { imageUrl } = res.data;
-      console.log(imageUrl);
-      setData({ ...data, imageUrl }); //imageUrl: imageUrl 可直接寫成imageUrl
-      setIsLogin(false);
+      const res = await adminApi.post("/upload", formData);
+      setData((prev) => ({ ...prev, imageUrl: res.data.imageUrl }));
     } catch (err) {
-      console.error(err.response);
-      setErr(err.response.data.message);
-      setIsLogin(false);
+      setErr(toErrorText(err));
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // --api create或edit資料
   const submit = async (type) => {
-    setIsLogin(true);
-    let method = "post";
-    let api = `/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/product`;
+    setIsLoading(true);
     try {
       if (type === "edit") {
-        method = "put";
-        api = `/v2/api/${import.meta.env.VITE_APP_API_PATH}/admin/product/${data.id}`;
+        await adminApi.put(`/product/${data.id}`, { data });
+      } else {
+        await adminApi.post("/product", { data });
       }
-      await axios[method](api, { data: data });
       closeDataModal();
       getAllData(page);
-      setIsLogin(false);
     } catch (err) {
-      // console.error(err.response.data.message);
-      Array.isArray(err.response.data.message)
-        ? setErr(err.response.data.message.join("、"))
-        : setErr(err.response.data.message);
-      setIsLogin(false);
+      setErr(toErrorText(err));
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // 讀取使用者輸入的資料並傳到data
   const handleChange = (e) => {
-    // console.log(e);
     const { id, value } = e.target;
     if (["origin_price", "price"].includes(id)) {
       setData({ ...data, [id]: value ? Number(value) : 0 });
@@ -148,7 +140,7 @@ const ProductsModal = ({
                     setData({ ...tempData });
                   }
                 }}
-                disabled={isLogin}
+                disabled={isLoading}
               ></button>
             </div>
             <div className="modal-body">
@@ -165,7 +157,7 @@ const ProductsModal = ({
                     placeholder="..."
                     onChange={handleChange}
                     value={data.title}
-                    disabled={isLogin}
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="col-md-3">
@@ -179,7 +171,7 @@ const ProductsModal = ({
                     placeholder="..."
                     onChange={handleChange}
                     value={data.category}
-                    disabled={isLogin}
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="col-md-3">
@@ -193,7 +185,7 @@ const ProductsModal = ({
                     placeholder="..."
                     onChange={handleChange}
                     value={data.unit}
-                    disabled={isLogin}
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="col-md-6">
@@ -212,7 +204,7 @@ const ProductsModal = ({
                         setData({ ...data, imageUrl: "" });
                       }
                     }}
-                    disabled={isLogin}
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="col-md-3">
@@ -226,7 +218,7 @@ const ProductsModal = ({
                     placeholder="..."
                     onChange={handleChange}
                     value={data.origin_price}
-                    disabled={isLogin}
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="col-md-3">
@@ -240,7 +232,7 @@ const ProductsModal = ({
                     placeholder="..."
                     onChange={handleChange}
                     value={data.price}
-                    disabled={isLogin}
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="col-md-6">
@@ -254,7 +246,7 @@ const ProductsModal = ({
                     placeholder="paste imageUrl link"
                     onChange={handleChange}
                     value={data.imageUrl}
-                    disabled={isLogin}
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="col-md-6">
@@ -268,7 +260,7 @@ const ProductsModal = ({
                     placeholder="..."
                     onChange={handleChange}
                     value={data.description}
-                    disabled={isLogin}
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="col-md-6">
@@ -296,7 +288,7 @@ const ProductsModal = ({
                   id="is_enabled"
                   onChange={handleChange}
                   checked={!!data.is_enabled}
-                  disabled={isLogin}
+                  disabled={isLoading}
                 />
                 <label className="form-check-label  mx-2" htmlFor="is_enabled">
                   啟用
@@ -313,7 +305,7 @@ const ProductsModal = ({
                     setData({ ...tempData });
                   }
                 }}
-                disabled={isLogin}
+                disabled={isLoading}
               >
                 關閉
               </button>
@@ -321,7 +313,7 @@ const ProductsModal = ({
                 type="button"
                 className="btn btn-success"
                 onClick={() => submit(type)}
-                disabled={isLogin}
+                disabled={isLoading}
               >
                 儲存
               </button>

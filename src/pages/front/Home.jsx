@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useOutletContext } from "react-router-dom";
-import axios from "axios";
 
 const Home = () => {
   const colRef = useRef(null);
@@ -125,8 +124,9 @@ const Home = () => {
           </div>
           <img
             src="https://images.unsplash.com/photo-1588416643538-56bfaf66c742?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="圖片"
+            alt="二手衣架上的潮流服飾"
             className="body2-text2-2"
+            loading="lazy"
             ref={bodyImgRef}
           />
         </div>
@@ -140,7 +140,8 @@ const Home = () => {
                 <img
                   src={product.imageUrl}
                   className="card-img-top"
-                  alt="圖片"
+                  alt={product.title}
+                  loading="lazy"
                 />
                 <div className="card-body">
                   <Link className="card-title" to={`/products/${product.id}`}>
@@ -159,10 +160,12 @@ const Home = () => {
           <div className="blog-title-1">顧客回饋</div>
         </div>
         <div className="blogCard" ref={cardRef}>
-          {feedback?.map((mes) => {
-            const backToDate = new Date(mes.create_at * 1000);
-            const messageData = backToDate.toISOString().slice(5, 10);
-            if (mes.isPublic) {
+          {feedback
+            .filter((mes) => mes.isPublic)
+            .map((mes) => {
+              const messageData = new Date(mes.create_at * 1000)
+                .toISOString()
+                .slice(5, 10);
               return (
                 <div className="card mb-3" key={mes.id}>
                   <div className="card-body">
@@ -181,8 +184,7 @@ const Home = () => {
                   </div>
                 </div>
               );
-            }
-          })}
+            })}
         </div>
       </div>
     </div>

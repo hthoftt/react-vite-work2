@@ -1,85 +1,73 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { NavLink, useNavigate, Outlet } from "react-router-dom";
+import Message from "../component/Message";
+import { getToken, clearToken } from "../../api";
+
+const navItems = [
+  { to: "/admin/products", label: "商品頁" },
+  { to: "/admin/orders", label: "訂單" },
+  { to: "/admin/adminFeedback", label: "顧客回饋" },
+];
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  // 登出 清空hexToken並跳回Login
-  const logout = async () => {
-    document.cookie = "hexToken=;";
-    navigate("/");
+  const token = getToken(); // 沒有 cookie 時回傳空字串,不會讓頁面崩潰
+
+  // 登出:讓 cookie 過期並回到登入頁
+  const logout = () => {
+    clearToken();
+    navigate("/login");
   };
 
-  // 取出token 1.以;分割 2.找到有hexToken位置 3.以=分割並取出=後面陣列 4.預設axios的token
-  const token = document.cookie
-    .split(";")
-    .find((row) => row.startsWith("hexToken"))
-    .split("=")[1];
-  axios.defaults.headers.common["Authorization"] = token;
-
+  // 沒有 token 或 token 無效就回登入頁
   useEffect(() => {
-    // 沒有token就自動跳回Login
     if (!token) {
-      navigate("/");
+      navigate("/login");
+      return;
     }
-    // 當navigate, token值變動時立即判斷token值是否有效,無效就跳回Login
     (async () => {
       try {
-        (await axios.post(`/v2/api/user/check`),
-          {},
-          { headers: { Authorization: token } });
-      } catch (err) {
-        navigate("/");
+        await axios.post("/v2/api/user/check", {}, { headers: { Authorization: token } });
+      } catch {
+        clearToken();
+        navigate("/login");
       }
     })();
   }, [navigate, token]);
 
   return (
     <>
+      <Message />
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid mx-4">
           <div className="navbar-brand fw-bold">
             <img
               src={`${import.meta.env.BASE_URL}logo.png`}
-              alt="logo"
+              alt="借我穿一下"
               style={{ width: "100px" }}
             />
           </div>
           <div className="navbar-collapse">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <NavLink
-                className="nav-link me-2"
-                to={"/admin/products"}
-                onClick={() => window.scrollTo(0, 0)}
-              >
-                商品頁
-              </NavLink>
-              <NavLink
-                className="nav-link me-2"
-                to={"/admin/orders"}
-                onClick={() => window.scrollTo(0, 0)}
-              >
-                訂單
-              </NavLink>
-              <NavLink
-                className="nav-link me-2"
-                to={"/admin/adminFeedback"}
-                onClick={() => window.scrollTo(0, 0)}
-              >
-                顧客回饋
-              </NavLink>
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  className="nav-link me-2"
+                  to={item.to}
+                  onClick={() => window.scrollTo(0, 0)}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
             </ul>
-            <button
-              className="btn btn-outline-dark"
-              type="submit"
-              onClick={logout}
-            >
+            <button className="btn btn-outline-dark" type="button" onClick={logout}>
               登出
             </button>
           </div>
         </div>
       </nav>
-      <div className="w-100 mb-3">{token && <Outlet context={token} />}</div>
+      <div className="w-100 mb-3">{token && <Outlet />}</div>
     </>
   );
 };
