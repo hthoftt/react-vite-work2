@@ -43,6 +43,11 @@
             div{
                 font-size: 10rem;
                 font-family:"Snowburst One", system-ui;
+                max-width: 100%;
+            }
+            img{
+                max-width: 100%; // logo 寬 25rem(400px),小螢幕不可超出畫面
+                height: auto;
             }
         }
     }
@@ -50,7 +55,7 @@
 
 @media (max-width:1024px){
     .frontLayout{
-        width: 100vw;
+        width: 100%; // 100vw 會把捲軸寬度算進去,造成水平溢出
         .footer{
             padding: 50px 0px 25px 0px;
             display: flex;

@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import FrontLayout from "./pages/front/FrontLayout";
 import Home from "./pages/front/Home";
 import Products from "./pages/front/Products";
@@ -29,6 +29,7 @@ function App() {
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Dashboard />}>
+          <Route index element={<Navigate to="products" replace />} />
           <Route path="products" element={<AdminProduct />} />
           <Route path="adminFeedback" element={<AdminFeedback />} />
           <Route path="orders" element={<AdminOrders />} />
