@@ -5,6 +5,97 @@
         text-shadow: 0 0 1px rgb(77, 80, 79);
     }
 }
+// 換退貨說明(加入購物車下方)
+.return-policy{
+    margin-top: 8px;
+    font-size: 0.95rem;
+    color: rgb(77, 80, 79);
+    details{
+        border-top: 1px solid rgba(77, 80, 79, 0.2);
+        &:last-of-type{
+            border-bottom: 1px solid rgba(77, 80, 79, 0.2);
+        }
+    }
+    summary{
+        display: flex;
+        align-items: center;
+        padding: 14px 4px;
+        cursor: pointer;
+        list-style: none; // 隱藏預設三角形
+        &::-webkit-details-marker{
+            display: none;
+        }
+        &::after{ // 右側展開箭頭
+            content: "\F282"; // bootstrap-icons chevron-down
+            font-family: "bootstrap-icons";
+            margin-left: auto;
+            transition: transform 0.25s;
+        }
+    }
+    details[open] summary::after{
+        transform: rotate(180deg);
+    }
+    .return-policy-tag{
+        margin-left: 8px;
+        padding: 0 6px;
+        font-size: 0.75rem;
+        border: 1px solid currentColor;
+        border-radius: 4px;
+    }
+    .return-steps{
+        counter-reset: step;
+        list-style: none;
+        padding: 0 4px 16px;
+        margin: 0;
+        li{
+            counter-increment: step;
+            position: relative;
+            padding: 0 0 14px 36px;
+            &::before{ // 圓形步驟編號
+                content: counter(step);
+                position: absolute;
+                left: 0;
+                top: 1px;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: rgb(77, 80, 79);
+                color: #fff;
+                font-size: 0.8rem;
+                display: grid;
+                place-items: center;
+            }
+            &:not(:last-child)::after{ // 步驟之間的連接線
+                content: "";
+                position: absolute;
+                left: 11.5px;
+                top: 27px;
+                bottom: 2px;
+                width: 1px;
+                background: rgba(77, 80, 79, 0.3);
+            }
+            strong{
+                display: block;
+                font-weight: 600;
+            }
+            span{
+                font-size: 0.875rem;
+                line-height: 1.6;
+            }
+        }
+    }
+    .return-notes{
+        padding: 0 4px 16px 24px;
+        margin: 0;
+        font-size: 0.875rem;
+        line-height: 1.7;
+    }
+    .return-policy-hint{
+        margin: 12px 0 0;
+        font-size: 0.85rem;
+    }
+}
+
 // 您可能也會喜歡:固定一行 4 欄
 .mayLike{
     width: 70%;

@@ -3,6 +3,7 @@ import { useParams, Link, useOutletContext } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { pushMessage } from "../../slice/messageSlice";
 import { api, getErrorData } from "../../api";
+import ReturnPolicy from "../component/ReturnPolicy";
 
 const ProductDetail = () => {
   const dispatch = useDispatch();
@@ -104,6 +105,7 @@ const ProductDetail = () => {
             >
               加入購物車
             </button>
+            <ReturnPolicy />
           </div>
         </div>
       </div>
