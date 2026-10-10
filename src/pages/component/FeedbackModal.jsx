@@ -45,10 +45,14 @@ const FeedbackModal = ({
   const submit = async (type) => {
     setIsLoading(true);
     try {
+      // 列表 API 回傳的資料沒有 content 欄位,編輯時表單裡的 content 會是空的。
+      // 畫面上只有一個「內容」欄位(寫入 description),送出時一律同步到 content,
+      // 避免沒動到內容欄位就無法儲存。
+      const payload = { ...data, content: data.description };
       if (type === "edit") {
-        await adminApi.put(`/article/${data.id}`, { data });
+        await adminApi.put(`/article/${data.id}`, { data: payload });
       } else {
-        await adminApi.post("/article", { data });
+        await adminApi.post("/article", { data: payload });
       }
       closeDataModal();
       getAllData(page);

@@ -12,7 +12,7 @@
     margin: 0 auto;
     ul{
         display: grid;
-        grid-template-columns: repeat(3,1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         flex-wrap: wrap;
         padding: 30px 0 50px 0;
         li{
@@ -40,6 +40,9 @@
                     }
                     .clothes-li-text{
                         color: rgb(77, 80, 79);
+                        .d-flex{
+                            flex-wrap: wrap; // 原價與特價在窄螢幕可換行
+                        }
                     }
                 }
         }
@@ -56,7 +59,7 @@
 @media(max-width:1024px){
     .clothes{
         ul{
-            grid-template-columns: repeat(2,1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr)); // minmax(0) 讓欄位可縮小,長標題不會撐開
         }
         .notProducts{
             display: flex;
