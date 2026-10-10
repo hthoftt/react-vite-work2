@@ -103,9 +103,9 @@ const FrontLayout = () => {
           <div className="context3">
             <div>
               <img
+                className="footer-logo"
                 src={`${import.meta.env.BASE_URL}logo.png`}
                 alt="借我穿一下"
-                style={{ width: "25rem", filter: "invert(1)" }} /* 黑色 logo 在深色頁尾反白 */
                 loading="lazy"
               />
             </div>
