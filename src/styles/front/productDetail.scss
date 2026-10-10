@@ -5,44 +5,58 @@
         text-shadow: 0 0 1px rgb(77, 80, 79);
     }
 }
+// 您可能也會喜歡:固定一行 4 欄
 .mayLike{
     width: 70%;
     margin: 0 auto;
+    padding-bottom: 60px;
     .mayLike-title{
-            padding-bottom: 20px;
-            font-size: 1.2rem;
-        }
+        padding-bottom: 20px;
+        font-size: 1.2rem;
+    }
     .mayLike-ul{
-        padding: 0; // 清掉 ul 預設的左側內距
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 24px;
+        padding: 0;
+        margin: 0;
         text-align: center;
-        justify-content: center;
         li{
             position: relative;
             .img-box{
                 .mayLike-img{
-                    width: 300px;
-                    max-width: calc(100% - 2rem); // 扣掉 mx-3 左右外距,小螢幕跟著縮小
-                    height: auto;
+                    width: 100%;
                     aspect-ratio: 1 / 1;
                     object-fit: cover;
                 }
             }
             i{
                 position: absolute;
-                top: 15px;
-                right: 30px;
+                top: 10px;
+                right: 12px;
             }
             .clothes-text-1{
-                font-size: 1.2rem;
+                font-size: 1.1rem;
                 color: rgb(77, 80, 79);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
             .clothes-text-2{
                 display: flex;
+                flex-wrap: wrap;
                 justify-content: center;
                 color: rgb(77, 80, 79);
             }
+        }
+    }
+}
+
+@media(max-width:1024px){
+    .mayLike{
+        width: 90%;
+        .mayLike-ul{
+            gap: 14px;
         }
     }
 }
@@ -62,35 +76,25 @@
         }
     }
 
+    // 手機:同樣一行,改成左右滑動(一次約顯示兩個半)
     .mayLike{
-        width: 80%;
-        margin: 0 auto;
+        width: 100%;
         .mayLike-title{
-            padding-bottom: 30px;
-            font-size: 1.2rem;
+            padding: 0 5% 16px;
         }
         .mayLike-ul{
-            display: flex;
-            flex-direction: column;
-            text-align: center;
+            grid-template-columns: none;
+            grid-auto-flow: column;
+            grid-auto-columns: 40%;
+            gap: 12px;
+            padding: 0 5% 8px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-padding-inline: 5%; // 對齊時保留左側留白,第一個商品不會被切掉
             li{
-                position: relative;
-                .mayLike-img{
-                    width: 50%;
-                }
-                i{
-                    position: absolute;
-                    top: 7px;
-                    right: 28%;
-                }
+                scroll-snap-align: start;
                 .clothes-text-1{
-                    font-size: 1rem;
-                    color: rgb(77, 80, 79);
-                }
-                .clothes-text-2{
-                    display: flex;
-                    justify-content: center;
-                    color: rgb(77, 80, 79);
+                    font-size: 0.95rem;
                 }
             }
         }

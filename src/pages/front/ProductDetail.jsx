@@ -39,11 +39,12 @@ const ProductDetail = () => {
     }
   };
 
-  // 同分類的其他商品(最多 4 件)
-  const related = product.category
-    ? allProducts
-        .filter((p) => p.category === product.category && p.id !== product.id)
-        .slice(0, 4)
+  // 您可能也會喜歡:固定 4 件,先放同分類,不足再用其他商品補滿
+  const related = product.id
+    ? [
+        ...allProducts.filter((p) => p.id !== product.id && p.category === product.category),
+        ...allProducts.filter((p) => p.id !== product.id && p.category !== product.category),
+      ].slice(0, 4)
     : [];
 
   return (
@@ -120,7 +121,7 @@ const ProductDetail = () => {
                   <img
                     src={item.imageUrl}
                     alt={item.title}
-                    className="border rounded mayLike-img mx-3"
+                    className="border rounded mayLike-img"
                     loading="lazy"
                   />
                 </div>
