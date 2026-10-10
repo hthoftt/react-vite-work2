@@ -41,13 +41,15 @@
             padding: 120px 150px 100px 150px;
             align-items: flex-end;
             div{
-                font-size: 10rem;
-                font-family:"Snowburst One", system-ui;
                 max-width: 100%;
+                line-height: 0; // 避免圖片下方多出文字行高的空白,logo 才會和右側版權文字底部對齊
             }
-            img{
-                max-width: 100%; // logo 寬 25rem(400px),小螢幕不可超出畫面
+            .footer-logo{
+                display: block;
+                width: 25rem;
+                max-width: 100%;
                 height: auto;
+                filter: invert(1); // 黑色 logo 在深色頁尾反白
             }
         }
     }
@@ -64,7 +66,7 @@
             .context{
                 font-size: 1rem;
                 line-height: 4rem;
-                padding: 0 0 80px 0;
+                padding: 0 24px 80px; // 手機版文字不貼齊螢幕邊緣
                 flex-direction: column-reverse;
                 .context2{
                     flex-direction: column-reverse;
@@ -75,8 +77,12 @@
             }
             .context3{
                 flex-direction: column;
-                padding: 0;
+                padding: 0 24px;
                 align-items:center;
+                gap: 16px;
+                .footer-logo{
+                    width: min(25rem, 70vw); // 手機版留左右空白,不貼齊螢幕邊緣
+                }
                 p{
                     font-size: 1rem;
                 }

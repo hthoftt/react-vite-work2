@@ -5,44 +5,149 @@
         text-shadow: 0 0 1px rgb(77, 80, 79);
     }
 }
+// 換退貨說明(加入購物車下方)
+.return-policy{
+    margin-top: 8px;
+    font-size: 0.95rem;
+    color: rgb(77, 80, 79);
+    details{
+        border-top: 1px solid rgba(77, 80, 79, 0.2);
+        &:last-of-type{
+            border-bottom: 1px solid rgba(77, 80, 79, 0.2);
+        }
+    }
+    summary{
+        display: flex;
+        align-items: center;
+        padding: 14px 4px;
+        cursor: pointer;
+        list-style: none; // 隱藏預設三角形
+        &::-webkit-details-marker{
+            display: none;
+        }
+        &::after{ // 右側展開箭頭
+            content: "\F282"; // bootstrap-icons chevron-down
+            font-family: "bootstrap-icons";
+            margin-left: auto;
+            transition: transform 0.25s;
+        }
+    }
+    details[open] summary::after{
+        transform: rotate(180deg);
+    }
+    .return-policy-tag{
+        margin-left: 8px;
+        padding: 0 6px;
+        font-size: 0.75rem;
+        border: 1px solid currentColor;
+        border-radius: 4px;
+    }
+    .return-steps{
+        counter-reset: step;
+        list-style: none;
+        padding: 0 4px 16px;
+        margin: 0;
+        li{
+            counter-increment: step;
+            position: relative;
+            padding: 0 0 14px 36px;
+            &::before{ // 圓形步驟編號
+                content: counter(step);
+                position: absolute;
+                left: 0;
+                top: 1px;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: rgb(77, 80, 79);
+                color: #fff;
+                font-size: 0.8rem;
+                display: grid;
+                place-items: center;
+            }
+            &:not(:last-child)::after{ // 步驟之間的連接線
+                content: "";
+                position: absolute;
+                left: 11.5px;
+                top: 27px;
+                bottom: 2px;
+                width: 1px;
+                background: rgba(77, 80, 79, 0.3);
+            }
+            strong{
+                display: block;
+                font-weight: 600;
+            }
+            span{
+                font-size: 0.875rem;
+                line-height: 1.6;
+            }
+        }
+    }
+    .return-notes{
+        padding: 0 4px 16px 24px;
+        margin: 0;
+        font-size: 0.875rem;
+        line-height: 1.7;
+    }
+    .return-policy-hint{
+        margin: 12px 0 0;
+        font-size: 0.85rem;
+    }
+}
+
+// 您可能也會喜歡:固定一行 4 欄
 .mayLike{
     width: 70%;
     margin: 0 auto;
+    padding-bottom: 60px;
     .mayLike-title{
-            padding-bottom: 20px;
-            font-size: 1.2rem;
-        }
+        padding-bottom: 20px;
+        font-size: 1.2rem;
+    }
     .mayLike-ul{
-        padding: 0; // 清掉 ul 預設的左側內距
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 24px;
+        padding: 0;
+        margin: 0;
         text-align: center;
-        justify-content: center;
         li{
             position: relative;
             .img-box{
                 .mayLike-img{
-                    width: 300px;
-                    max-width: calc(100% - 2rem); // 扣掉 mx-3 左右外距,小螢幕跟著縮小
-                    height: auto;
+                    width: 100%;
                     aspect-ratio: 1 / 1;
                     object-fit: cover;
                 }
             }
             i{
                 position: absolute;
-                top: 15px;
-                right: 30px;
+                top: 10px;
+                right: 12px;
             }
             .clothes-text-1{
-                font-size: 1.2rem;
+                font-size: 1.1rem;
                 color: rgb(77, 80, 79);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
             .clothes-text-2{
                 display: flex;
+                flex-wrap: wrap;
                 justify-content: center;
                 color: rgb(77, 80, 79);
             }
+        }
+    }
+}
+
+@media(max-width:1024px){
+    .mayLike{
+        width: 90%;
+        .mayLike-ul{
+            gap: 14px;
         }
     }
 }
@@ -62,35 +167,25 @@
         }
     }
 
+    // 手機:同樣一行,改成左右滑動(一次約顯示兩個半)
     .mayLike{
-        width: 80%;
-        margin: 0 auto;
+        width: 100%;
         .mayLike-title{
-            padding-bottom: 30px;
-            font-size: 1.2rem;
+            padding: 0 5% 16px;
         }
         .mayLike-ul{
-            display: flex;
-            flex-direction: column;
-            text-align: center;
+            grid-template-columns: none;
+            grid-auto-flow: column;
+            grid-auto-columns: 40%;
+            gap: 12px;
+            padding: 0 5% 8px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-padding-inline: 5%; // 對齊時保留左側留白,第一個商品不會被切掉
             li{
-                position: relative;
-                .mayLike-img{
-                    width: 50%;
-                }
-                i{
-                    position: absolute;
-                    top: 7px;
-                    right: 28%;
-                }
+                scroll-snap-align: start;
                 .clothes-text-1{
-                    font-size: 1rem;
-                    color: rgb(77, 80, 79);
-                }
-                .clothes-text-2{
-                    display: flex;
-                    justify-content: center;
-                    color: rgb(77, 80, 79);
+                    font-size: 0.95rem;
                 }
             }
         }
